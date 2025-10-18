@@ -14,8 +14,9 @@ import { DatePicker as AntdDatePicker } from "antd";
 import dayjs from "dayjs";
 import updateLocale from "dayjs/plugin/updateLocale";
 import "dayjs/locale/en";
+import { cn } from "@/lib/utils";
 
-export const DatePicker = () => {
+export const DatePickerInput = () => {
   dayjs.extend(updateLocale);
 
   dayjs.updateLocale("en", {
@@ -29,6 +30,16 @@ export const DatePicker = () => {
           border: "none",
           boxShadow: "none",
           background: "transparent",
+        }}
+        classNames={{
+          popup: {
+            root: cn(
+              "[&_.ant-picker-header]:!border-b-0",
+              "[&_.ant-picker-input]:!font-sans",
+              "[&_.ant-picker-header-view]:!font-bold",
+              "[&_.ant-picker-content_th]:!font-bold"
+            ),
+          },
         }}
         prevIcon={<ChevronLeft className="text-neutral-100 hover:text-neutral-100/50 h-4 w-4" />}
         nextIcon={<ChevronRight className="text-neutral-100 hover:text-neutral-100/50 h-4 w-4" />}

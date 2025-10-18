@@ -1,4 +1,5 @@
-import { DatePicker } from "@/components/input/date-picker";
+import { ComboboxInput } from "@/components/input/combobox";
+import { DatePickerInput } from "@/components/input/date-picker";
 import { Button } from "@/components/ui/button";
 import { Field, FieldGroup, FieldLabel, FieldSet } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
@@ -58,7 +59,7 @@ const JobPage = async ({ params }: JobPageProps) => {
 
             <Field>
               <FieldLabel htmlFor="name">Date of birth</FieldLabel>
-              <DatePicker />
+              <DatePickerInput />
             </Field>
 
             <Field>
@@ -78,7 +79,7 @@ const JobPage = async ({ params }: JobPageProps) => {
 
             <Field>
               <FieldLabel htmlFor="name">Domicile*</FieldLabel>
-              <Input id="name" autoComplete="off" placeholder="Evil Rabbit" />
+              <ComboboxInput placeholder="Choose your domicile" />
             </Field>
 
             <Field>
