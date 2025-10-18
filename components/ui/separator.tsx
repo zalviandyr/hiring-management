@@ -23,8 +23,8 @@ function Separator({
       orientation={orientation}
       className={cn(
         "shrink-0 data-[orientation=horizontal]:h-px data-[orientation=horizontal]:w-full data-[orientation=vertical]:h-full data-[orientation=vertical]:w-px",
-        variant === "normal" && "bg-border",
-        variant === "dashed" && "border border-dashed",
+        variant === "normal" && "bg-neutral-40",
+        variant === "dashed" && "border border-neutral-40 border-dashed",
         className
       )}
       {...props}

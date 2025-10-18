@@ -2,30 +2,16 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import Image from "next/image";
 import { JobCard } from "./_components/JobCard";
+import { Header } from "./_components/Header";
 
 const Home = () => {
   return (
     <div className="relative">
-      <div className="bg-white flex flex-row px-32 h-12 py-3 items-center shadow">
-        <div className="w-full bg-red-500"></div>
+      <Header />
 
-        <div className="flex flex-row items-center gap-4 w-full h-full justify-end">
-          <Separator orientation="vertical" />
-
-          <div className="relative h-7 w-7 rounded-full border border-ring/40">
-            <Image
-              src={"/images/profile.png"}
-              alt="Profile Image"
-              fill
-              className="object-contain"
-            />
-          </div>
-        </div>
-      </div>
-
-      <div className="flex flex-row mt-5 px-24">
+      <div className="flex flex-row mt-8 px-24">
         {/* Job List */}
-        <div className="flex flex-col px-5 gap-3 w-1/2">
+        <div className="flex flex-col px-5 gap-5 w-1/2">
           {/* Job Card */}
           <JobCard />
           <JobCard />
@@ -33,10 +19,10 @@ const Home = () => {
         </div>
 
         {/* Job Detail */}
-        <div className="flex flex-col border border-border rounded-lg p-6">
-          <div className="flex flex-row border-b border-border h-24">
+        <div className="flex flex-col border border-neutral-40 rounded-lg p-6">
+          <div className="flex flex-row border-b border-neutral-40 h-24">
             <div className="flex flex-row gap-6 grow w-full">
-              <div className="relative h-12 w-12 border border-border rounded">
+              <div className="relative h-12 w-12 border border-neutral-40 rounded">
                 <Image src={"/images/rakamin.png"} alt="Job Logo" fill className="object-contain" />
               </div>
 
@@ -46,7 +32,7 @@ const Home = () => {
                 </span>
 
                 <span className="font-bold text-lg">UX Designer</span>
-                <span className="text-sm">Rakamin</span>
+                <span className="text-sm text-neutral-70">Rakamin</span>
               </div>
             </div>
 

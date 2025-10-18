@@ -3,9 +3,9 @@ import Image from "next/image";
 
 export const JobCard = () => {
   return (
-    <div className="flex flex-col border border-border justify-center px-4 rounded-lg h-[140px] w-full">
+    <div className="flex flex-col border border-neutral-40 justify-center px-4 rounded-lg h-[140px] w-full">
       <div className="flex flex-row h-12 gap-4">
-        <div className="relative h-12 w-12 border border-border rounded">
+        <div className="relative h-12 w-12 border border-neutral-40 rounded">
           <Image src={"/images/rakamin.png"} alt="Job Logo" fill className="object-contain" />
         </div>
 
