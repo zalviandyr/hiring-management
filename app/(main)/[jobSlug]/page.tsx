@@ -1,5 +1,6 @@
 import { ComboboxInput } from "@/components/input/combobox";
 import { DatePickerInput } from "@/components/input/date-picker";
+import { PhoneNumberInput } from "@/components/input/phone-number";
 import { Button } from "@/components/ui/button";
 import { Field, FieldGroup, FieldLabel, FieldSet } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
@@ -84,7 +85,8 @@ const JobPage = async ({ params }: JobPageProps) => {
 
             <Field>
               <FieldLabel htmlFor="name">Phone number*</FieldLabel>
-              <Input id="name" autoComplete="off" placeholder="Evil Rabbit" />
+              <PhoneNumberInput />
+              {/* <Input id="name" autoComplete="off" placeholder="Evil Rabbit" /> */}
             </Field>
 
             <Field>
