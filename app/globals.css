@@ -16,6 +16,7 @@
   --color-neutral-100: var(--neutral-100);
   --color-success-main: var(--success-main);
   --color-danger-main: var(--danger-main);
+  --color-primary-main: var(--primary-main);
   --color-secondary-main: var(--secondary-main);
 
   --radius-sm: calc(var(--radius) - 4px);
@@ -38,6 +39,7 @@
   --neutral-100: oklch(0.2376 0.0036 228.95);
   --danger-main: oklch(0.5781 0.2273 25.33);
   --success-main: oklch(0.602 0.0997 160);
+  --primary-main: oklch(0.6104 0.1038 203.2);
   --secondary-main: oklch(0.8397 0.1572 83.55);
 }
 
