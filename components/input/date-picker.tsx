@@ -15,7 +15,7 @@ import dayjs from "dayjs";
 import updateLocale from "dayjs/plugin/updateLocale";
 import "dayjs/locale/en";
 
-export const DatePickerField = () => {
+export const DatePicker = () => {
   dayjs.extend(updateLocale);
 
   dayjs.updateLocale("en", {
