@@ -9,6 +9,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { ArrowLeftIcon, Upload } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import { CapturePicture } from "./_components/CapturePicture";
 
 type JobPageProps = {
   params: Promise<{ jobSlug: string }>;
@@ -39,16 +40,18 @@ const JobPage = async ({ params }: JobPageProps) => {
 
           <FieldSet>
             <FieldGroup>
-              <div className="flex flex-col gap-2">
+              <div className="flex flex-col items-start gap-2">
                 <span className="font-bold text-xs">Photo Profile</span>
                 <div className="relative h-32 w-32">
                   <Image src={"/images/avatar.png"} alt="Avatar" fill />
                 </div>
 
-                <Button type="button" className="w-fit">
-                  <Upload className="h-4 w-4" />
-                  Take a Picture
-                </Button>
+                <CapturePicture>
+                  <Button type="button" className="w-fit">
+                    <Upload className="h-4 w-4" />
+                    Take a Picture
+                  </Button>
+                </CapturePicture>
               </div>
 
               <Field>
