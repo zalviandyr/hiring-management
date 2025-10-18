@@ -2,6 +2,8 @@ import { DatePicker } from "@/components/input/date-picker";
 import { Button } from "@/components/ui/button";
 import { Field, FieldGroup, FieldLabel, FieldSet } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -61,7 +63,17 @@ const JobPage = async ({ params }: JobPageProps) => {
 
             <Field>
               <FieldLabel htmlFor="name">Pronoun (gender)*</FieldLabel>
-              <Input id="name" autoComplete="off" placeholder="Evil Rabbit" />
+              <RadioGroup className="flex flex-row gap-3">
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="female" id="female" />
+                  <Label htmlFor="female">She/her (Female)</Label>
+                </div>
+
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="male" id="male" />
+                  <Label htmlFor="male">He/him (Male)</Label>
+                </div>
+              </RadioGroup>
             </Field>
 
             <Field>
