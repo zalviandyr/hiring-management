@@ -1,54 +1,61 @@
 "use client";
 
 import * as React from "react";
-import { CalendarIcon, ChevronDownIcon } from "lucide-react";
-
-import { Button } from "@/components/ui/button";
-import { Calendar } from "@/components/ui/calendar";
-import { Label } from "@/components/ui/label";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Input } from "@/components/ui/input";
-import { InputGroup, InputGroupAddon, InputGroupInput } from "../ui/input-group";
+import {
+  ChevronDownIcon,
+  ChevronLeft,
+  ChevronRight,
+  ChevronsLeft,
+  ChevronsRight,
+} from "lucide-react";
+import { InputGroup, InputGroupAddon } from "../ui/input-group";
 import Image from "next/image";
+import { DatePicker as AntdDatePicker } from "antd";
+import dayjs from "dayjs";
+import updateLocale from "dayjs/plugin/updateLocale";
+import "dayjs/locale/en";
 
 export const DatePickerField = () => {
-  const [open, setOpen] = React.useState(false);
-  const [date, setDate] = React.useState<Date | undefined>(undefined);
+  dayjs.extend(updateLocale);
+
+  dayjs.updateLocale("en", {
+    weekdaysMin: ["S", "M", "T", "W", "T", "F", "S"], // hanya 1 huruf
+  });
 
   return (
-    <div className="flex flex-col gap-3">
-      <Popover open={open} onOpenChange={setOpen}>
-        <PopoverTrigger>
-          <InputGroup>
-            <InputGroupInput
-              placeholder="Select your date of birth"
-              value={date?.toLocaleDateString()}
-            />
+    <InputGroup>
+      <AntdDatePicker
+        style={{
+          border: "none",
+          boxShadow: "none",
+          background: "transparent",
+        }}
+        prevIcon={<ChevronLeft className="text-neutral-100 hover:text-neutral-100/50 h-4 w-4" />}
+        nextIcon={<ChevronRight className="text-neutral-100 hover:text-neutral-100/50 h-4 w-4" />}
+        superPrevIcon={
+          <ChevronsLeft className="text-neutral-100 hover:text-neutral-100/50 h-4 w-4" />
+        }
+        superNextIcon={
+          <ChevronsRight className="text-neutral-100 hover:text-neutral-100/50 h-4 w-4" />
+        }
+        showNow={false}
+        suffixIcon={<></>}
+        allowClear={false}
+        className="w-full"
+        inputReadOnly
+        placeholder="Select your date of birth"
+        disabledDate={(currentDate) => currentDate && currentDate.isAfter(dayjs(), "day")}
+      />
 
-            <InputGroupAddon>
-              <div className="relative h-4 w-4">
-                <Image src={"/icons/calendar.svg"} alt="Calendar Icon" fill />
-              </div>
-            </InputGroupAddon>
+      <InputGroupAddon>
+        <div className="relative h-4 w-4">
+          <Image src={"/icons/calendar.svg"} alt="Calendar Icon" fill />
+        </div>
+      </InputGroupAddon>
 
-            <InputGroupAddon align="inline-end">
-              <ChevronDownIcon />
-            </InputGroupAddon>
-          </InputGroup>
-        </PopoverTrigger>
-
-        <PopoverContent className="w-auto overflow-hidden p-0 border-0" align="start">
-          <Calendar
-            mode="single"
-            selected={date}
-            captionLayout="label"
-            onSelect={(date) => {
-              setDate(date);
-              setOpen(false);
-            }}
-          />
-        </PopoverContent>
-      </Popover>
-    </div>
+      <InputGroupAddon align="inline-end">
+        <ChevronDownIcon />
+      </InputGroupAddon>
+    </InputGroup>
   );
 };

@@ -46,3 +46,17 @@
     @apply bg-background text-neutral-90 font-sans;
   }
 }
+
+.ant-picker-dropdown .ant-picker-header {
+  border-bottom: none;
+}
+
+.ant-picker-dropdown,
+.ant-picker-input {
+  font-family: var(--font-nunito), sans-serif;
+}
+
+.ant-picker-content th,
+.ant-picker-header-view {
+  font-weight: 700 !important;
+}
