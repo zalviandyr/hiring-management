@@ -11,6 +11,7 @@
   --color-neutral-20: var(--neutral-20);
   --color-neutral-40: var(--neutral-40);
   --color-neutral-70: var(--neutral-70);
+  --color-neutral-60: var(--neutral-60);
   --color-neutral-90: var(--neutral-90);
   --color-neutral-100: var(--neutral-100);
   --color-success-main: var(--success-main);
@@ -32,6 +33,7 @@
   --neutral-20: oklch(0.9851 0 0);
   --neutral-40: oklch(0.9067 0 0);
   --neutral-70: oklch(0.5624 0 0);
+  --neutral-60: oklch(0.6993 0 0);
   --neutral-90: oklch(0.3715 0 0);
   --neutral-100: oklch(0.2376 0.0036 228.95);
   --danger-main: oklch(0.5781 0.2273 25.33);
