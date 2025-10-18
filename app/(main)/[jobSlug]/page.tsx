@@ -47,7 +47,7 @@ const JobPage = async ({ params }: JobPageProps) => {
                 </div>
 
                 <CapturePicture>
-                  <Button type="button" className="w-fit">
+                  <Button>
                     <Upload className="h-4 w-4" />
                     Take a Picture
                   </Button>
