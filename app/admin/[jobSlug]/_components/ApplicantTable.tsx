@@ -22,46 +22,24 @@ import {
 } from "@dnd-kit/core";
 import { restrictToHorizontalAxis } from "@dnd-kit/modifiers";
 import { arrayMove, SortableContext, horizontalListSortingStrategy } from "@dnd-kit/sortable";
-import { faker } from "@faker-js/faker";
 import { DraggableTableHeader } from "./DraggableTableHeader";
 import { DragAlongCell } from "./DragAlongCell";
+import { ApplicantFormData } from "@/features/applicants/schema";
+import Link from "next/link";
+import { formatDate } from "@/lib/utils";
 
-export type Applicant = {
-  fullName: string;
-  email: string;
-  phone: string;
-  dateOfBirth: string;
-  domicile: string;
-  gender: string;
-  linkedin: string;
+type ApplicantTableProps = {
+  data: ApplicantFormData[];
 };
 
-const makeData = (len: number): Applicant[] => {
-  const result: Applicant[] = [];
-  for (let i = 0; i < len; i++) {
-    result.push({
-      fullName: faker.person.fullName(),
-      email: faker.person.lastName(),
-      phone: faker.phone.number(),
-      dateOfBirth: faker.person.zodiacSign(),
-      domicile: faker.person.jobArea(),
-      gender: faker.person.gender(),
-      linkedin: faker.person.sex(),
-    });
-  }
-
-  return result;
-};
-
-export const ApplicantTable = () => {
-  const [data, setData] = useState<Applicant[]>([]);
+export const ApplicantTable = ({ data }: ApplicantTableProps) => {
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [columnOrder, setColumnOrder] = useState<string[]>([]);
-  const columns = useMemo<ColumnDef<Applicant, any>[]>(
+  const columns = useMemo<ColumnDef<ApplicantFormData, any>[]>(
     () => [
       {
-        id: "fullName",
-        accessorKey: "fullName",
+        id: "full_name",
+        accessorKey: "full_name",
         header: "Full name",
         cell: (info) => info.getValue(),
         enableResizing: true,
@@ -74,17 +52,17 @@ export const ApplicantTable = () => {
         enableResizing: true,
       },
       {
-        id: "phone",
-        accessorKey: "phone",
+        id: "phone_number",
+        accessorKey: "phone_number",
         header: "Phone Number",
         cell: (info) => info.getValue(),
         enableResizing: true,
       },
       {
-        id: "dateOfBirth",
-        accessorKey: "dateOfBirth",
+        id: "date_of_birth",
+        accessorKey: "date_of_birth",
         header: "Date of Birth",
-        cell: (info) => info.getValue(),
+        cell: (info) => <span>{formatDate(info.getValue())}</span>,
         enableResizing: true,
       },
       {
@@ -98,14 +76,18 @@ export const ApplicantTable = () => {
         id: "gender",
         accessorKey: "gender",
         header: "Gender",
-        cell: (info) => info.getValue(),
+        cell: (info) => <span className="capitalize">{info.getValue()}</span>,
         enableResizing: true,
       },
       {
-        id: "linkedin",
-        accessorKey: "linkedin",
+        id: "linkedin_link",
+        accessorKey: "linkedin_link",
         header: "Link Linkedin",
-        cell: (info) => info.getValue(),
+        cell: (info) => (
+          <Link href={info.getValue()} className="text-primary-main" target="_blank">
+            {info.getValue()}
+          </Link>
+        ),
         enableResizing: true,
         enableColumnFilter: false,
       },
@@ -118,10 +100,6 @@ export const ApplicantTable = () => {
   useEffect(() => {
     setColumnOrder(initialColumnOrder);
   }, [initialColumnOrder]);
-
-  useEffect(() => {
-    setData(makeData(5000));
-  }, []);
 
   const table = useReactTable({
     data,

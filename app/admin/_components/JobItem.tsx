@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Job, JobStatus } from "@/features/jobs/types";
-import { cn, formatRupiah, formatShortDate } from "@/lib/utils";
+import { cn, formatRupiah, formatDate } from "@/lib/utils";
 import Link from "next/link";
 import { useMemo } from "react";
 
@@ -15,7 +15,7 @@ export const JobItem = ({ data }: JobItemProps) => {
         <Badge state={data.status} />
 
         <div className="rounded-md py-1 px-4 border border-neutral-40">
-          <span className="text-sm">started on {formatShortDate(data.created)}</span>
+          <span className="text-sm">started on {formatDate(data.created)}</span>
         </div>
       </div>
 
@@ -29,7 +29,7 @@ export const JobItem = ({ data }: JobItemProps) => {
             <span>{formatRupiah(data.salary_range.max)}</span>
           </div>
 
-          <Link href={"/admin/frontend-192"}>
+          <Link href={`/admin/${data.slug}`}>
             <Button type="button" variant={"primary"} size={"xs"}>
               Manage Job
             </Button>

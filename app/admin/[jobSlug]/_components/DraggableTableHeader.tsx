@@ -3,10 +3,14 @@ import { CSS } from "@dnd-kit/utilities";
 import { cn } from "@/lib/utils";
 import { Column, flexRender, Header } from "@tanstack/react-table";
 import { useSortable } from "@dnd-kit/sortable";
-import { Applicant } from "./ApplicantTable";
 import { Input } from "@/components/ui/input";
+import { ApplicantFormData } from "@/features/applicants/schema";
 
-export const DraggableTableHeader = ({ header }: { header: Header<Applicant, unknown> }) => {
+export const DraggableTableHeader = ({
+  header,
+}: {
+  header: Header<ApplicantFormData, unknown>;
+}) => {
   const { attributes, isDragging, listeners, setNodeRef, transform } = useSortable({
     id: header.column.id,
   });
@@ -32,8 +36,8 @@ export const DraggableTableHeader = ({ header }: { header: Header<Applicant, unk
         "relative select-none"
       )}
     >
-      <div className="flex h-full flex-col gap-3" {...attributes} {...listeners}>
-        <div className="cursor-grab text-center">
+      <div className="flex h-full flex-col gap-3">
+        <div className="cursor-grab text-center" {...attributes} {...listeners}>
           {header.isPlaceholder
             ? null
             : flexRender(header.column.columnDef.header, header.getContext())}

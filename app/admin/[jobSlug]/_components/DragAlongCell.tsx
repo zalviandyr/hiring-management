@@ -1,11 +1,11 @@
 import { Cell, flexRender } from "@tanstack/react-table";
-import { Applicant } from "./ApplicantTable";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSSProperties } from "react";
 import { CSS } from "@dnd-kit/utilities";
 import { cn } from "@/lib/utils";
+import { ApplicantFormData } from "@/features/applicants/schema";
 
-export const DragAlongCell = ({ cell }: { cell: Cell<Applicant, unknown> }) => {
+export const DragAlongCell = ({ cell }: { cell: Cell<ApplicantFormData, unknown> }) => {
   const { isDragging, setNodeRef, transform } = useSortable({
     id: cell.column.id,
   });

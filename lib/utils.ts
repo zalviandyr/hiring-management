@@ -16,10 +16,10 @@ export function formatRupiah(value: number) {
   return rupiahFormatter.format(value ?? 0);
 }
 
-export function formatShortDate(input: Date | string | number) {
+export function formatDate(input: Date | string | number, type: "short" | "long" = "short") {
   const shortDateFormatter = new Intl.DateTimeFormat("en-GB", {
     day: "numeric",
-    month: "short",
+    month: type,
     year: "numeric",
   });
 
