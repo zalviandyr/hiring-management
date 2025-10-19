@@ -31,13 +31,23 @@ export const CapturePicture = ({ children }: React.PropsWithChildren) => {
 };
 
 const CapturePictureContent = () => {
+  const REQUIRED_FINGERS_BY_STEP: Record<number, number> = { 1: 1, 2: 2, 3: 3 };
+  const POSE_HOLD_DURATION_MS = 3000;
+
   const videoRef = useRef<HTMLVideoElement>(null);
   const captureCanvasRef = useRef<HTMLCanvasElement | null>(null);
   const overlayBoxRef = useRef<PoseOverlayBoxHandle | null>(null);
+  const poseHoldStartRef = useRef<number | null>(null);
+
   const [poseStep, setPoseStep] = useState(1);
+  const [heldTime, setHeldTime] = useState(0);
   const [, setCapturedImage] = useState<string | null>(null);
   const [cameraState, setCameraState] = useState<ICameraState>("request");
   const poseStepRef = useRef(poseStep);
+
+  const visionTaskUrl = "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@latest/wasm";
+  const modelAssetPath =
+    "https://storage.googleapis.com/mediapipe-models/hand_landmarker/hand_landmarker/float16/1/hand_landmarker.task";
 
   useEffect(() => {
     poseStepRef.current = poseStep;
@@ -69,31 +79,49 @@ const CapturePictureContent = () => {
           const { fingers, palmFacing } = countFingersWithPalm(landmarks);
 
           if (palmFacing) {
-            // overlayBoxRef?.updateHandOverlay(landmarks);
             overlayBoxRef.current?.updateHandOverlay(landmarks);
             overlayBoxRef.current?.setCurrentPose(fingers);
 
-            // urutan step pose
-            let nextStep = poseStepRef.current;
-            if (nextStep === 1 && fingers === 1) {
-              nextStep = 2;
-              updatePoseStep(2);
-            } else if (nextStep === 2 && fingers === 2) {
-              nextStep = 3;
-              updatePoseStep(3);
-            } else if (nextStep === 3 && fingers === 3) {
-              capturePhoto();
-              nextStep = 1;
-              updatePoseStep(1);
+            const currentStep = poseStepRef.current;
+            const expectedFingers = REQUIRED_FINGERS_BY_STEP[currentStep];
+            const isCorrectPose = fingers === expectedFingers;
+
+            // update to next step if the post is correct
+            if (isCorrectPose) {
+              const now = Date.now();
+              if (!poseHoldStartRef.current) {
+                poseHoldStartRef.current = now;
+              }
+
+              const heldFor = now - poseHoldStartRef.current;
+              setHeldTime(heldFor);
+              if (heldFor >= POSE_HOLD_DURATION_MS) {
+                reset();
+
+                if (currentStep === 3) {
+                  capturePhoto();
+                  updatePoseStep(1);
+                } else {
+                  updatePoseStep(currentStep + 1);
+                }
+              }
+            } else {
+              reset();
             }
           } else {
-            overlayBoxRef.current?.clearHandOverlay();
+            reset();
           }
         } else {
-          overlayBoxRef.current?.clearHandOverlay();
+          reset();
         }
 
         animationFrameId = requestAnimationFrame(process);
+      };
+
+      const reset = () => {
+        setHeldTime(0);
+        poseHoldStartRef.current = null;
+        overlayBoxRef.current?.clearHandOverlay();
       };
 
       process();
@@ -108,16 +136,10 @@ const CapturePictureContent = () => {
       setCameraState("request");
 
       try {
-        const vision = await FilesetResolver.forVisionTasks(
-          // CDN resmi (tanpa harus download model manual)
-          "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@latest/wasm"
-        );
+        const vision = await FilesetResolver.forVisionTasks(visionTaskUrl);
 
         handLandmarker = await HandLandmarker.createFromOptions(vision, {
-          baseOptions: {
-            modelAssetPath:
-              "https://storage.googleapis.com/mediapipe-models/hand_landmarker/hand_landmarker/float16/1/hand_landmarker.task",
-          },
+          baseOptions: { modelAssetPath },
           runningMode: "VIDEO",
           numHands: 1,
         });
@@ -198,13 +220,13 @@ const CapturePictureContent = () => {
     const fingerPips = [6, 10, 14, 18];
     let count = 0;
 
-    // Deteksi orientasi tangan
+    // --- Detect the general hand orientation ---
     const wrist = landmarks[0];
     const thumbCmc = landmarks[1];
     const indexMcp = landmarks[5];
     const pinkyMcp = landmarks[17];
 
-    // Buat dua vektor bidang telapak tangan
+    // --- Construct two vectors along the palm surface (from wrist to index and pinky) ---
     const v1 = {
       x: indexMcp.x - wrist.x,
       y: indexMcp.y - wrist.y,
@@ -216,37 +238,39 @@ const CapturePictureContent = () => {
       z: pinkyMcp.z - wrist.z,
     };
 
-    // Hitung cross product (arah normal telapak tangan)
+    // --- Compute the cross product of the two vectors to determine the palm’s normal direction ---
     const normal = {
       x: v1.y * v2.z - v1.z * v2.y,
       y: v1.z * v2.x - v1.x * v2.z,
       z: v1.x * v2.y - v1.y * v2.x,
     };
 
-    // Jika normal.z < 0 → telapak menghadap kamera
+    // --- Check if the palm is facing the camera (normal.z < 0 means facing forward) ---
     const isPalmFacingCamera = normal.z < -0.005;
 
     if (!isPalmFacingCamera) {
-      // Jika tidak menghadap kamera → anggap 0 jari
+      // If the palm is not facing the camera, ignore finger counting
       return { fingers: 0, palmFacing: false };
     }
 
-    // 1️⃣ Deteksi tangan kanan / kiri (untuk logika jempol)
+    // --- Step 1: Determine if the detected hand is right or left (used for thumb logic) ---
     const thumbTip = landmarks[4];
     const thumbMcp = landmarks[2];
     const isRightHand = thumbTip.x < wrist.x;
 
-    // 2️⃣ Thumb detection
+    // --- Step 2: Detect thumb extension (based on horizontal position) ---
     if (isRightHand) {
       if (thumbTip.x < thumbMcp.x - 0.03) count++;
     } else {
       if (thumbTip.x > thumbMcp.x + 0.03) count++;
     }
 
-    // 3️⃣ Finger detection (index - pinky)
+    // --- Step 3: Detect raised fingers (index → pinky) based on vertical position ---
     for (let i = 0; i < 4; i++) {
       const tipY = landmarks[fingerTips[i]].y;
       const pipY = landmarks[fingerPips[i]].y;
+
+      // Finger considered "up" if the tip is significantly higher than the PIP joint
       if (pipY - tipY > 0.03) count++;
     }
 
@@ -290,7 +314,11 @@ const CapturePictureContent = () => {
           <>
             <PoseOverlayBox ref={overlayBoxRef} />
 
-            <PoseInstructionIndicator poseStep={poseStep} />
+            <PoseInstructionIndicator
+              poseStep={poseStep}
+              maxHeldDuration={POSE_HOLD_DURATION_MS}
+              currentHeldDuration={heldTime}
+            />
           </>
         )}
       </div>
