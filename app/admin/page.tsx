@@ -46,9 +46,11 @@ const AdminPage = () => {
             <span className="text-sm">Create jobs, invite, and hire with ease</span>
           </div>
 
-          <Button type="button" variant={"primary"} className="w-full">
-            Create a new job
-          </Button>
+          <JobOpening>
+            <Button type="button" variant={"primary"} className="w-full">
+              Create a new job
+            </Button>
+          </JobOpening>
         </div>
       </div>
     </div>

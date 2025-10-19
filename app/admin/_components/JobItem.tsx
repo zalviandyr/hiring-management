@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import Link from "next/link";
 import { useMemo } from "react";
 
 type BadgeState = "active" | "inactive" | "draft";
@@ -25,9 +26,11 @@ export const JobItem = () => {
             <span>Rp8.000.000</span>
           </div>
 
-          <Button type="button" variant={"primary"} size={"xs"}>
-            Manage Job
-          </Button>
+          <Link href={"/admin/frontend-192"}>
+            <Button type="button" variant={"primary"} size={"xs"}>
+              Manage Job
+            </Button>
+          </Link>
         </div>
       </div>
     </div>
