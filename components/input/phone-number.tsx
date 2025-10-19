@@ -15,7 +15,11 @@ type Country = {
   dialCode: string;
 };
 
-export const PhoneNumberInput = () => {
+type PhoneNumberInputProps = {
+  onChange?: (value: string) => void;
+};
+
+export const PhoneNumberInput = ({ onChange }: PhoneNumberInputProps) => {
   const [selected, setSelected] = useState<Country | null>(null);
   const [value, setValue] = useState("");
 
@@ -68,8 +72,7 @@ export const PhoneNumberInput = () => {
                 <CommandItem
                   key={item.code}
                   onSelect={() => {
-                    // setValue(item);
-                    // setOpen(false);
+                    setSelected(item);
                   }}
                   className="cursor-pointer flex flex-row text-xs text-neutral-100 hover:bg-neutral-20 rounded-md py-2"
                 >
@@ -94,7 +97,16 @@ export const PhoneNumberInput = () => {
 
       <InputGroupAddon>{selected?.dialCode}</InputGroupAddon>
 
-      <InputGroupInput placeholder="XXXXX" />
+      <InputGroupInput
+        placeholder="XXXXX"
+        type="number"
+        onChange={(e) => {
+          const value = e.target.value;
+          const result = selected?.dialCode + value;
+
+          onChange?.(result);
+        }}
+      />
     </InputGroup>
   );
 };

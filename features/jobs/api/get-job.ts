@@ -1,9 +1,9 @@
 import { createClient } from "@/lib/supabase/client";
 import { Job } from "../types";
 
-export const getJobs = async () => {
+export const getJob = async (slug: string): Promise<Job> => {
   const supabase = createClient();
-  const { data, error } = await supabase
+  const { data } = await supabase
     .from("jobs")
     .select(
       `
@@ -22,8 +22,10 @@ export const getJobs = async () => {
       )
     `
     )
-    .overrideTypes<Job[]>();
+    .eq("slug", slug)
+    .single()
+    .overrideTypes<Job>()
+    .throwOnError();
 
-  if (error) throw error;
-  return data ?? [];
+  return data;
 };

@@ -1,13 +1,16 @@
+"use client";
+
+import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { InputGroup, InputGroupAddon, InputGroupInput } from "@/components/ui/input-group";
-import Image from "next/image";
 import { JobOpening } from "./_components/JobOpening";
 import { JobEmpty } from "./_components/JobEmpty";
 import { JobItem } from "./_components/JobItem";
-import { getJobs } from "@/features/jobs/api/get-jobs";
+import { useJobs } from "@/features/jobs/queries/use-jobs";
 
-const AdminPage = async () => {
-  const jobs = await getJobs();
+const AdminPage = () => {
+  const { data } = useJobs();
+  const jobs = data ?? [];
 
   return (
     <div className="flex flex-row gap-6">

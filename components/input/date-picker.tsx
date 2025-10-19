@@ -16,7 +16,11 @@ import updateLocale from "dayjs/plugin/updateLocale";
 import "dayjs/locale/en";
 import { cn } from "@/lib/utils";
 
-export const DatePickerInput = () => {
+type DatePickerInputProps = {
+  onChange?: (value: Date) => void;
+};
+
+export const DatePickerInput = ({ onChange }: DatePickerInputProps) => {
   dayjs.extend(updateLocale);
 
   dayjs.updateLocale("en", {
@@ -26,6 +30,10 @@ export const DatePickerInput = () => {
   return (
     <InputGroup>
       <AntdDatePicker
+        onChange={(e) => {
+          onChange?.(e.toDate());
+        }}
+        format={"DD MMMM YYYY"}
         style={{
           border: "none",
           boxShadow: "none",

@@ -3,7 +3,9 @@ export type JobStatus = "active" | "inactive" | "draft";
 export type Job = {
   id: string;
   slug: string;
+  type: string;
   title: string;
+  description: string;
   status: JobStatus;
   created: Date;
   salary_range: JobSalary;
