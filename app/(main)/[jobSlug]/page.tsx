@@ -10,9 +10,8 @@ import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { ArrowLeftIcon, Upload } from "lucide-react";
 import Image from "next/image";
-import Link from "next/link";
 import { CapturePicture } from "./_components/CapturePicture";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useJob } from "@/features/jobs/queries/use-job";
 import { useForm } from "react-hook-form";
 import {
@@ -23,13 +22,17 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ApplicantFormData, ApplicantFormInput, formSchema } from "@/features/applicants/schema";
+import { useCreateApplicant } from "@/features/applicants/queries/use-create-applicant";
+import { toast } from "sonner";
 
 const JobPage = () => {
+  const router = useRouter();
+
   const { jobSlug } = useParams<{ jobSlug?: string }>();
   const { data } = useJob(jobSlug);
+  const { mutate, isPending } = useCreateApplicant();
 
   const types = [
     {
@@ -57,16 +60,31 @@ const JobPage = () => {
   const form = useForm<ApplicantFormInput, undefined, ApplicantFormData>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      fullName: "",
+      full_name: "",
       gender: "",
       domicile: "",
       email: "",
-      linkedinLink: "",
+      phone_number: "",
+      linkedin_link: "",
     },
   });
 
   const onSubmit = (values: ApplicantFormData) => {
-    console.warn({ values });
+    if (data) {
+      mutate(
+        { data: values, job: data },
+        {
+          onSuccess: () => {
+            toast.success(`Success to apply ${data.title} Job`);
+
+            router.back();
+          },
+          onError: () => {
+            toast.error(`Failed to apply ${data.title} Job`);
+          },
+        }
+      );
+    }
   };
 
   return (
@@ -74,11 +92,9 @@ const JobPage = () => {
       <div className="flex flex-col gap-6 border border-neutral-40 py-10">
         <div className="flex flex-row justify-between px-10">
           <div className="flex flex-row items-center gap-4">
-            <Link href={"/"}>
-              <Button type="button" size="icon-sm">
-                <ArrowLeftIcon className="h-5 w-5" />
-              </Button>
-            </Link>
+            <Button type="button" size="icon-sm" onClick={() => router.back()}>
+              <ArrowLeftIcon className="h-5 w-5" />
+            </Button>
 
             <span className="font-bold text-lg text-neutral-100">Apply {data?.title}</span>
           </div>
@@ -108,7 +124,7 @@ const JobPage = () => {
 
                 <FormField
                   control={form.control}
-                  name="fullName"
+                  name="full_name"
                   render={({ field }) => {
                     return (
                       <FormItem>
@@ -126,7 +142,7 @@ const JobPage = () => {
 
                 <FormField
                   control={form.control}
-                  name="dateOfBirth"
+                  name="date_of_birth"
                   render={({ field }) => {
                     return (
                       <FormItem>
@@ -199,7 +215,7 @@ const JobPage = () => {
 
                 <FormField
                   control={form.control}
-                  name="phoneNumber"
+                  name="phone_number"
                   render={({ field }) => {
                     return (
                       <FormItem>
@@ -235,7 +251,7 @@ const JobPage = () => {
 
                 <FormField
                   control={form.control}
-                  name="linkedinLink"
+                  name="linkedin_link"
                   render={({ field }) => {
                     return (
                       <FormItem>
@@ -260,7 +276,7 @@ const JobPage = () => {
         type="button"
         className="my-6 mx-10"
         variant="primary"
-        // isLoading={isPending}
+        isLoading={isPending}
         onClick={form.handleSubmit(onSubmit)}
       >
         Submit
