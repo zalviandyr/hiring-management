@@ -1,9 +1,9 @@
 import { createClient } from "@/lib/supabase/client";
-import { Job, JobSalary } from "../types";
+import { FormRequirement, Job, JobApplicationForm, JobSalary } from "../types";
 import { buildIncrementalId, buildSlug } from "@/lib/utils";
 import { JobFormData } from "../schema";
 
-export const createJob = async (data: JobFormData) => {
+export const createJob = async (data: JobFormData, formRequirements: FormRequirement[]) => {
   const supabase = createClient();
 
   const { data: salary } = await supabase
@@ -24,6 +24,15 @@ export const createJob = async (data: JobFormData) => {
     .overrideTypes<Job>()
     .throwOnError();
 
+  const { data: application } = await supabase
+    .from("job_application_forms")
+    .select("id")
+    .order("id", { ascending: false })
+    .limit(1)
+    .maybeSingle()
+    .overrideTypes<JobApplicationForm>()
+    .throwOnError();
+
   const newSalaryId = buildIncrementalId({
     lastId: salary?.id,
     prefix: "salary",
@@ -31,6 +40,10 @@ export const createJob = async (data: JobFormData) => {
   const newJobId = buildIncrementalId({
     lastId: job?.id,
     prefix: "job",
+  });
+  const newApplicationId = buildIncrementalId({
+    lastId: application?.id,
+    prefix: "application",
   });
 
   await supabase
@@ -52,5 +65,11 @@ export const createJob = async (data: JobFormData) => {
     slug: buildSlug(data.title, newJobId),
     status: "active",
     salary_range: newSalaryId,
+  });
+
+  await supabase.from("job_application_forms").insert({
+    id: newApplicationId,
+    job_id: newJobId,
+    fields: formRequirements,
   });
 };

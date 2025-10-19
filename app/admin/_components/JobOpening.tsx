@@ -30,6 +30,8 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { formSchema, JobFormData, JobFormInput } from "@/features/jobs/schema";
 import { toast } from "sonner";
+import { useState } from "react";
+import { FormRequirement } from "@/features/jobs/types";
 
 export const JobOpening = ({ children }: React.PropsWithChildren) => {
   return (
@@ -44,7 +46,89 @@ export const JobOpening = ({ children }: React.PropsWithChildren) => {
 };
 
 const JobOpeningContent = () => {
-  const properties = ["Full name", "Photo Profile", "Gender"];
+  const [properties, setProperties] = useState<FormRequirement[]>([
+    {
+      key: "full-name",
+      label: "Full name",
+      value: "mandatory",
+      status: [
+        { key: "mandatory", disabled: false },
+        { key: "optional", disabled: true },
+        { key: "off", disabled: true },
+      ],
+    },
+    {
+      key: "photo-profile",
+      label: "Photo profile",
+      value: "mandatory",
+      status: [
+        { key: "mandatory", disabled: false },
+        { key: "optional", disabled: true },
+        { key: "off", disabled: true },
+      ],
+    },
+    {
+      key: "gender",
+      label: "Gender",
+      value: "mandatory",
+      status: [
+        { key: "mandatory", disabled: false },
+        { key: "optional", disabled: false },
+        { key: "off", disabled: false },
+      ],
+    },
+    {
+      key: "domicile",
+      label: "Domicile",
+      value: "mandatory",
+      status: [
+        { key: "mandatory", disabled: false },
+        { key: "optional", disabled: false },
+        { key: "off", disabled: false },
+      ],
+    },
+    {
+      key: "email",
+      label: "Email",
+      value: "mandatory",
+      status: [
+        { key: "mandatory", disabled: false },
+        { key: "optional", disabled: true },
+        { key: "off", disabled: true },
+      ],
+    },
+    {
+      key: "phone-number",
+      label: "Phone number",
+      value: "mandatory",
+      status: [
+        { key: "mandatory", disabled: false },
+        { key: "optional", disabled: false },
+        { key: "off", disabled: false },
+      ],
+    },
+    {
+      key: "linkedin-link",
+      label: "Linkedin link",
+      value: "mandatory",
+      status: [
+        { key: "mandatory", disabled: false },
+        { key: "optional", disabled: false },
+        { key: "off", disabled: false },
+      ],
+    },
+    {
+      key: "date-of-birth",
+      label: "Date of birth",
+      value: "mandatory",
+      status: [
+        { key: "mandatory", disabled: false },
+        { key: "optional", disabled: false },
+        { key: "off", disabled: false },
+      ],
+    },
+  ]);
+
   const types = [
     {
       value: "Full-time",
@@ -79,14 +163,23 @@ const JobOpeningContent = () => {
 
   const { mutate, isPending } = useCreateJob();
   const onSubmit = (values: JobFormData) => {
-    mutate(values, {
-      onSuccess: () => {
-        toast.success(`Success to create ${values.title} Job`);
-      },
-      onError: () => {
-        toast.error(`Failed to create ${values.title} Job`);
-      },
-    });
+    mutate(
+      { data: values, formRequirements: properties },
+      {
+        onSuccess: () => {
+          toast.success(`Success to create ${values.title} Job`);
+        },
+        onError: () => {
+          toast.error(`Failed to create ${values.title} Job`);
+        },
+      }
+    );
+  };
+
+  const handleStatusChange = (reqKey: string, newValue: FormRequirement["value"]) => {
+    setProperties((prev) =>
+      prev.map((req) => (req.key === reqKey ? { ...req, value: newValue } : req))
+    );
   };
 
   return (
@@ -250,19 +343,24 @@ const JobOpeningContent = () => {
           <div className="flex flex-col">
             {properties.map((e, idx) => (
               <div
-                key={e}
+                key={e.key}
                 className={cn(
                   "flex flex-row text-sm py-4",
                   idx < properties.length - 1 && "border-b border-neutral-40",
                   idx === properties.length - 1 && "pb-0"
                 )}
               >
-                <span className="grow my-auto">{e}</span>
+                <span className="grow my-auto">{e.label}</span>
 
                 <div className="flex flex-row gap-2">
-                  <Chip label="Mandatory" isSelected />
-                  <Chip label="Optional" isSelected={false} />
-                  <Chip label="Off" isSelected={false} />
+                  {e.status.map((s) => (
+                    <Chip
+                      label={s.key}
+                      disabled={s.disabled}
+                      isSelected={e.value === s.key}
+                      onClick={() => handleStatusChange(e.key, s.key)}
+                    />
+                  ))}
                 </div>
               </div>
             ))}

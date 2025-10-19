@@ -24,7 +24,6 @@ export const metadata: Metadata = {
 // TODO: next js top loader
 // TODO: logic max candidate when applicant apply
 // TODO: add dropdown currency
-// TODO: toast error or success ketika save job
 export default function RootLayout({ children }: React.PropsWithChildren) {
   return (
     <html lang="en">

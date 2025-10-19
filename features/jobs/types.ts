@@ -15,3 +15,16 @@ export type JobSalary = {
   max: number;
   currency: string;
 };
+
+export type JobApplicationForm = {
+  id: string;
+  job_id: string;
+  fields: FormRequirement;
+};
+
+export type FormRequirement = {
+  key: string;
+  label: string;
+  value: "mandatory" | "optional" | "off";
+  status: { key: FormRequirement["value"]; disabled: boolean }[];
+};
