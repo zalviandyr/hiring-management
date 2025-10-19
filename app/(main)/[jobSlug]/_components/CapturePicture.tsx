@@ -10,12 +10,13 @@ import {
 } from "@/components/ui/dialog";
 import { CameraIcon, ChevronRight, CircleXIcon } from "lucide-react";
 import Image from "next/image";
-import React, { useEffect, useRef, useState } from "react";
-import { HandLandmarker, FilesetResolver } from "@mediapipe/tasks-vision";
+import React, { useEffect, useMemo, useRef, useState } from "react";
+import { HandLandmarker, FilesetResolver, NormalizedLandmark } from "@mediapipe/tasks-vision";
 import { cn } from "@/lib/utils";
+import { PoseOverlayBox, PoseOverlayBoxHandle } from "./PoseOverlayBox";
+import { PoseInstructionIndicator } from "./PoseInstructionIndicator";
 
 type ICameraState = "allow" | "denied" | "request";
-type OverlayBox = { left: number; top: number; width: number; height: number };
 
 export const CapturePicture = ({ children }: React.PropsWithChildren) => {
   return (
@@ -32,12 +33,10 @@ export const CapturePicture = ({ children }: React.PropsWithChildren) => {
 const CapturePictureContent = () => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const captureCanvasRef = useRef<HTMLCanvasElement | null>(null);
-  const overlayBoxRef = useRef<OverlayBox | null>(null);
-  const [currentPose, setCurrentPose] = useState(0);
+  const overlayBoxRef = useRef<PoseOverlayBoxHandle | null>(null);
   const [poseStep, setPoseStep] = useState(1);
   const [, setCapturedImage] = useState<string | null>(null);
   const [cameraState, setCameraState] = useState<ICameraState>("request");
-  const [handOverlay, setHandOverlay] = useState<OverlayBox | null>(null);
   const poseStepRef = useRef(poseStep);
 
   useEffect(() => {
@@ -70,8 +69,9 @@ const CapturePictureContent = () => {
           const { fingers, palmFacing } = countFingersWithPalm(landmarks);
 
           if (palmFacing) {
-            updateHandOverlay(landmarks);
-            setCurrentPose(fingers);
+            // overlayBoxRef?.updateHandOverlay(landmarks);
+            overlayBoxRef.current?.updateHandOverlay(landmarks);
+            overlayBoxRef.current?.setCurrentPose(fingers);
 
             // urutan step pose
             let nextStep = poseStepRef.current;
@@ -87,10 +87,10 @@ const CapturePictureContent = () => {
               updatePoseStep(1);
             }
           } else {
-            clearHandOverlay();
+            overlayBoxRef.current?.clearHandOverlay();
           }
         } else {
-          clearHandOverlay();
+          overlayBoxRef.current?.clearHandOverlay();
         }
 
         animationFrameId = requestAnimationFrame(process);
@@ -193,48 +193,7 @@ const CapturePictureContent = () => {
     setCapturedImage(image);
   };
 
-  const updateHandOverlay = (landmarks: any[]) => {
-    const xs = landmarks.map((point) => point.x);
-    const ys = landmarks.map((point) => point.y);
-
-    const padding = 0.08;
-    const clamp = (value: number) => Math.min(Math.max(value, 0), 1);
-
-    const minX = clamp(Math.min(...xs) - padding);
-    const maxX = clamp(Math.max(...xs) + padding);
-    const minY = clamp(Math.min(...ys) - padding);
-    const maxY = clamp(Math.max(...ys) + padding);
-
-    const nextOverlay: OverlayBox = {
-      left: minX * 100,
-      top: minY * 100,
-      width: (maxX - minX) * 100,
-      height: (maxY - minY) * 100,
-    };
-
-    const prev = overlayBoxRef.current;
-    const threshold = 0.5;
-    const hasChanged =
-      !prev ||
-      Math.abs(prev.left - nextOverlay.left) > threshold ||
-      Math.abs(prev.top - nextOverlay.top) > threshold ||
-      Math.abs(prev.width - nextOverlay.width) > threshold ||
-      Math.abs(prev.height - nextOverlay.height) > threshold;
-
-    if (hasChanged) {
-      overlayBoxRef.current = nextOverlay;
-      setHandOverlay(nextOverlay);
-    }
-  };
-
-  const clearHandOverlay = () => {
-    if (overlayBoxRef.current) {
-      overlayBoxRef.current = null;
-      setHandOverlay(null);
-    }
-  };
-
-  const countFingersWithPalm = (landmarks: any[]) => {
+  const countFingersWithPalm = (landmarks: NormalizedLandmark[]) => {
     const fingerTips = [8, 12, 16, 20];
     const fingerPips = [6, 10, 14, 18];
     let count = 0;
@@ -325,34 +284,14 @@ const CapturePictureContent = () => {
           cameraState === "allow" ? "block" : "hidden"
         )}
       >
-        <video
-          ref={videoRef}
-          autoPlay
-          playsInline
-          className={`object-cover w-full h-full ${
-            cameraState === "allow" ? "opacity-100" : "opacity-0"
-          }`}
-        />
+        <video ref={videoRef} autoPlay playsInline className="object-cover w-full h-full" />
 
         {cameraState === "allow" && (
-          <div
-            className="absolute border-2 border-emerald-400 rounded-md transition-all duration-150"
-            style={
-              handOverlay
-                ? ({
-                    left: `${handOverlay.left}%`,
-                    top: `${handOverlay.top}%`,
-                    width: `${handOverlay.width}%`,
-                    height: `${handOverlay.height}%`,
-                    display: "block",
-                  } as React.CSSProperties)
-                : ({ display: "none" } as React.CSSProperties)
-            }
-          >
-            <span className="absolute -top-9 left-0 bg-emerald-500 text-white text-xs font-semibold px-2 py-1 rounded">
-              Pose {currentPose}
-            </span>
-          </div>
+          <>
+            <PoseOverlayBox ref={overlayBoxRef} />
+
+            <PoseInstructionIndicator poseStep={poseStep} />
+          </>
         )}
       </div>
 
