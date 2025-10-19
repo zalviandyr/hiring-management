@@ -10,14 +10,15 @@ import {
 } from "@/components/ui/dialog";
 import { CameraIcon, ChevronRight, CircleXIcon } from "lucide-react";
 import Image from "next/image";
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { HandLandmarker, FilesetResolver, NormalizedLandmark } from "@mediapipe/tasks-vision";
 import { cn } from "@/lib/utils";
 import { PoseOverlayBox, PoseOverlayBoxHandle } from "./PoseOverlayBox";
 import { PoseInstructionIndicator } from "./PoseInstructionIndicator";
 import { Button } from "@/components/ui/button";
+import { CaptureOverlay } from "./CaptureOverlay";
 
-type ICameraState = "allow" | "denied" | "requested" | "captured";
+type ICameraState = "allow" | "denied" | "requested" | "captured" | "capturing";
 
 export const CapturePicture = ({ children }: React.PropsWithChildren) => {
   return (
@@ -34,13 +35,14 @@ export const CapturePicture = ({ children }: React.PropsWithChildren) => {
 const CapturePictureContent = () => {
   const REQUIRED_FINGERS_BY_STEP: Record<number, number> = { 1: 1, 2: 2, 3: 3 };
   const POSE_HOLD_DURATION_MS = 3000;
+  const CAPTURE_DURATION_MS = 3000;
 
   const visionTaskUrl = "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@latest/wasm";
   const modelAssetPath =
     "https://storage.googleapis.com/mediapipe-models/hand_landmarker/hand_landmarker/float16/1/hand_landmarker.task";
 
   const [poseStep, setPoseStep] = useState(1);
-  const [heldTime, setHeldTime] = useState(0);
+  const [poseHeldTime, setPoseHeldTime] = useState(0);
   const [capturedImage, setCapturedImage] = useState<string | null>(null);
   const [cameraState, setCameraState] = useState<ICameraState>("requested");
 
@@ -94,10 +96,10 @@ const CapturePictureContent = () => {
               }
 
               const heldFor = now - poseHoldStartRef.current;
-              setHeldTime(heldFor);
+              setPoseHeldTime(heldFor);
               if (heldFor >= POSE_HOLD_DURATION_MS) {
                 if (currentStep === 3) {
-                  capturePhoto();
+                  startCapture();
                   updatePoseStep(1);
                 } else {
                   updatePoseStep(currentStep + 1);
@@ -119,7 +121,7 @@ const CapturePictureContent = () => {
       };
 
       const reset = () => {
-        setHeldTime(0);
+        setPoseHeldTime(0);
         poseHoldStartRef.current = null;
         overlayBoxRef.current?.clearHandOverlay();
       };
@@ -192,6 +194,10 @@ const CapturePictureContent = () => {
       handLandmarker?.close();
     };
   }, []);
+
+  const startCapture = () => {
+    setCameraState("capturing");
+  };
 
   const capturePhoto = () => {
     if (!videoRef.current) return;
@@ -309,7 +315,7 @@ const CapturePictureContent = () => {
       <div
         className={cn(
           "w-full my-4 h-[500px] relative flex items-center justify-center overflow-hidden",
-          cameraState === "allow" ? "block" : "hidden"
+          cameraState === "allow" || cameraState === "capturing" ? "block" : "hidden"
         )}
       >
         <video ref={videoRef} autoPlay playsInline className="object-cover w-full h-full" />
@@ -321,9 +327,13 @@ const CapturePictureContent = () => {
             <PoseInstructionIndicator
               poseStep={poseStep}
               maxHeldDuration={POSE_HOLD_DURATION_MS}
-              currentHeldDuration={heldTime}
+              currentHeldDuration={poseHeldTime}
             />
           </>
+        )}
+
+        {cameraState === "capturing" && (
+          <CaptureOverlay maxCaptureDuration={CAPTURE_DURATION_MS} onCapture={capturePhoto} />
         )}
       </div>
 
@@ -331,7 +341,7 @@ const CapturePictureContent = () => {
         <img src={capturedImage!} alt="Captured" className="w-full h-[500px] object-cover" />
       )}
 
-      {cameraState === "allow" && (
+      {(cameraState === "allow" || cameraState === "capturing") && (
         <DialogFooter>
           <div className="flex flex-col gap-4">
             <span className="text-xs text-neutral-100">
