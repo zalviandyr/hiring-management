@@ -15,7 +15,7 @@ export const Header = () => {
 
         <Separator orientation="vertical" />
 
-        <div className="relative h-7 w-7 rounded-full border border-neutral-40 cursor-pointer">
+        <div className="relative h-7 w-7 rounded-full border border-neutral-40">
           <Image src={"/images/profile.png"} alt="Profile Image" fill className="object-contain" />
         </div>
       </div>
