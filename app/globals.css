@@ -18,16 +18,9 @@
   --color-danger-main: var(--danger-main);
   --color-primary-main: var(--primary-main);
   --color-secondary-main: var(--secondary-main);
-
-  --radius-sm: calc(var(--radius) - 4px);
-  --radius-md: calc(var(--radius) - 2px);
-  --radius-lg: var(--radius);
-  --radius-xl: calc(var(--radius) + 4px);
 }
 
 :root {
-  --radius: 0.625rem;
-
   --background: oklch(1 0 0);
 
   --neutral-10: oklch(1 0 0);

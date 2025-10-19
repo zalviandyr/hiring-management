@@ -1,9 +1,13 @@
 import { Separator } from "@/components/ui/separator";
 import Image from "next/image";
 
-export const Header = () => {
+export const AdminHeader = () => {
   return (
     <div className="bg-neutral-10 flex flex-row px-32 h-12 py-3 items-center shadow-lg">
+      <div className="w-full">
+        <span className="text-lg font-bold">Job List</span>
+      </div>
+
       <div className="flex flex-row items-center gap-4 w-full h-full justify-end">
         <Separator orientation="vertical" />
 

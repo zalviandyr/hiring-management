@@ -15,6 +15,7 @@ export const metadata: Metadata = {
   description: "Hiring Management Web App",
 };
 
+// TODO: scroll component
 export default function RootLayout({ children }: React.PropsWithChildren) {
   return (
     <html lang="en">
