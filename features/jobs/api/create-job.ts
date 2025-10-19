@@ -46,6 +46,9 @@ export const createJob = async (data: JobFormData) => {
   await supabase.from("jobs").insert({
     id: newJobId,
     title: data.title,
+    description: data.description,
+    max_candidate: data.max_candidate,
+    type: data.type,
     slug: buildSlug(data.title, newJobId),
     status: "active",
     salary_range: newSalaryId,
