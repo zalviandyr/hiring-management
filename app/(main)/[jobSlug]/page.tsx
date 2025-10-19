@@ -26,36 +26,15 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { ApplicantFormData, ApplicantFormInput, formSchema } from "@/features/applicants/schema";
 import { useCreateApplicant } from "@/features/applicants/queries/use-create-applicant";
 import { toast } from "sonner";
+import { useRegencies } from "@/features/applicants/queries/use-regencies";
 
 const JobPage = () => {
   const router = useRouter();
 
   const { jobSlug } = useParams<{ jobSlug?: string }>();
   const { data } = useJob(jobSlug);
+  const { data: regencies } = useRegencies();
   const { mutate, isPending } = useCreateApplicant();
-
-  const types = [
-    {
-      value: "Full-time",
-      label: "Full-time",
-    },
-    {
-      value: "Contract",
-      label: "Contract",
-    },
-    {
-      value: "Part-time",
-      label: "Part-time",
-    },
-    {
-      value: "Internship",
-      label: "Internship",
-    },
-    {
-      value: "Freelance",
-      label: "Freelance",
-    },
-  ];
 
   const form = useForm<ApplicantFormInput, undefined, ApplicantFormData>({
     resolver: zodResolver(formSchema),
@@ -202,7 +181,10 @@ const JobPage = () => {
                         <FormControl>
                           <ComboboxInput
                             placeholder="Choose your domicile"
-                            options={types}
+                            options={regencies?.map((e) => ({
+                              value: e,
+                              label: e,
+                            }))}
                             onChange={(e) => field.onChange(e)}
                           />
                         </FormControl>

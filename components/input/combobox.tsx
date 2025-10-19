@@ -36,6 +36,7 @@ export const ComboboxInput = ({ placeholder, options, onChange }: ComboboxInputP
       >
         <Select
           allowClear
+          showSearch
           placeholder={placeholder}
           optionFilterProp="label"
           value={value}
