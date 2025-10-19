@@ -1,4 +1,5 @@
 import { ApplicantTable } from "./_components/ApplicantTable";
+import { CandidateEmpty } from "./_components/CandidateEmpty";
 
 type AdminManageJobPageProps = {
   params: Promise<{ jobSlug: string }>;
@@ -12,7 +13,9 @@ const AdminManageJobPage = async ({ params }: AdminManageJobPageProps) => {
       <span className="text-lg font-bold">{jobSlug}</span>
 
       <div className="border border-neutral-40 rounded-lg p-6">
-        <ApplicantTable />
+        {/* <ApplicantTable /> */}
+
+        <CandidateEmpty />
       </div>
     </div>
   );
