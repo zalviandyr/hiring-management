@@ -15,8 +15,9 @@ import { HandLandmarker, FilesetResolver, NormalizedLandmark } from "@mediapipe/
 import { cn } from "@/lib/utils";
 import { PoseOverlayBox, PoseOverlayBoxHandle } from "./PoseOverlayBox";
 import { PoseInstructionIndicator } from "./PoseInstructionIndicator";
+import { Button } from "@/components/ui/button";
 
-type ICameraState = "allow" | "denied" | "request";
+type ICameraState = "allow" | "denied" | "requested" | "captured";
 
 export const CapturePicture = ({ children }: React.PropsWithChildren) => {
   return (
@@ -34,20 +35,19 @@ const CapturePictureContent = () => {
   const REQUIRED_FINGERS_BY_STEP: Record<number, number> = { 1: 1, 2: 2, 3: 3 };
   const POSE_HOLD_DURATION_MS = 3000;
 
-  const videoRef = useRef<HTMLVideoElement>(null);
-  const captureCanvasRef = useRef<HTMLCanvasElement | null>(null);
-  const overlayBoxRef = useRef<PoseOverlayBoxHandle | null>(null);
-  const poseHoldStartRef = useRef<number | null>(null);
-
-  const [poseStep, setPoseStep] = useState(1);
-  const [heldTime, setHeldTime] = useState(0);
-  const [, setCapturedImage] = useState<string | null>(null);
-  const [cameraState, setCameraState] = useState<ICameraState>("request");
-  const poseStepRef = useRef(poseStep);
-
   const visionTaskUrl = "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@latest/wasm";
   const modelAssetPath =
     "https://storage.googleapis.com/mediapipe-models/hand_landmarker/hand_landmarker/float16/1/hand_landmarker.task";
+
+  const [poseStep, setPoseStep] = useState(1);
+  const [heldTime, setHeldTime] = useState(0);
+  const [capturedImage, setCapturedImage] = useState<string | null>(null);
+  const [cameraState, setCameraState] = useState<ICameraState>("requested");
+
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const overlayBoxRef = useRef<PoseOverlayBoxHandle | null>(null);
+  const poseHoldStartRef = useRef<number | null>(null);
+  const poseStepRef = useRef(poseStep);
 
   useEffect(() => {
     poseStepRef.current = poseStep;
@@ -96,14 +96,14 @@ const CapturePictureContent = () => {
               const heldFor = now - poseHoldStartRef.current;
               setHeldTime(heldFor);
               if (heldFor >= POSE_HOLD_DURATION_MS) {
-                reset();
-
                 if (currentStep === 3) {
                   capturePhoto();
                   updatePoseStep(1);
                 } else {
                   updatePoseStep(currentStep + 1);
                 }
+
+                reset();
               }
             } else {
               reset();
@@ -129,11 +129,11 @@ const CapturePictureContent = () => {
 
     const init = async () => {
       if (!videoRef.current) {
-        setCameraState("request");
+        setCameraState("requested");
         return;
       }
 
-      setCameraState("request");
+      setCameraState("requested");
 
       try {
         const vision = await FilesetResolver.forVisionTasks(visionTaskUrl);
@@ -145,7 +145,7 @@ const CapturePictureContent = () => {
         });
 
         if (!isMounted || !videoRef.current) {
-          setCameraState("request");
+          setCameraState("requested");
           return;
         }
 
@@ -160,11 +160,6 @@ const CapturePictureContent = () => {
         videoRef.current.srcObject = activeStream;
         videoRef.current.onloadedmetadata = () => {
           if (!videoRef.current) return;
-
-          const captureCanvas = captureCanvasRef.current ?? document.createElement("canvas");
-          captureCanvas.width = videoRef.current.videoWidth || 640;
-          captureCanvas.height = videoRef.current.videoHeight || 480;
-          captureCanvasRef.current = captureCanvas;
 
           videoRef.current
             .play()
@@ -200,20 +195,29 @@ const CapturePictureContent = () => {
 
   const capturePhoto = () => {
     if (!videoRef.current) return;
-    const canvas = captureCanvasRef.current ?? document.createElement("canvas");
     const video = videoRef.current;
-    if (!canvas.width || !canvas.height) {
-      canvas.width = video.videoWidth || 640;
-      canvas.height = video.videoHeight || 480;
-    }
+
+    // set canvas size
+    const canvas = document.createElement("canvas");
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
 
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
     ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
     const image = canvas.toDataURL("image/png");
+
+    setCameraState("captured");
     setCapturedImage(image);
   };
+
+  const retakePhotoHandle = () => {
+    setCameraState("allow");
+    setCapturedImage(null);
+  };
+
+  const submitHandle = () => {};
 
   const countFingersWithPalm = (landmarks: NormalizedLandmark[]) => {
     const fingerTips = [8, 12, 16, 20];
@@ -286,7 +290,7 @@ const CapturePictureContent = () => {
         </DialogTitle>
       </DialogHeader>
 
-      {cameraState === "request" && (
+      {cameraState === "requested" && (
         <div className="flex flex-col items-center my-4 gap-4 text-center">
           <CameraIcon className="text-neutral-40 w-12 h-12" />
           <span className="text-sm">Request camera permission.</span>
@@ -323,6 +327,10 @@ const CapturePictureContent = () => {
         )}
       </div>
 
+      {cameraState === "captured" && (
+        <img src={capturedImage!} alt="Captured" className="w-full h-[500px] object-cover" />
+      )}
+
       {cameraState === "allow" && (
         <DialogFooter>
           <div className="flex flex-col gap-4">
@@ -349,6 +357,18 @@ const CapturePictureContent = () => {
               </div>
             </div>
           </div>
+        </DialogFooter>
+      )}
+
+      {cameraState === "captured" && (
+        <DialogFooter className="flex flex-row gap-4 justify-center">
+          <Button type="button" onClick={retakePhotoHandle}>
+            Retake Photo
+          </Button>
+
+          <Button variant={"primary"} type="button" onClick={submitHandle}>
+            Submit
+          </Button>
         </DialogFooter>
       )}
     </>
