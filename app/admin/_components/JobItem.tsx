@@ -49,14 +49,6 @@ const Badge = ({ state }: { state: JobStatus }) => {
     return "";
   }, [state]);
 
-  const color = useMemo(() => {
-    if (state === "active") return "success";
-    if (state === "inactive") return "danger";
-    if (state === "draft") return "secondary";
-
-    return "";
-  }, [state]);
-
   const { textColor, bgColor, borderColor } = useMemo(() => {
     let textColor = "text-neutral-100";
     let bgColor = "bg-neutral-100/10";

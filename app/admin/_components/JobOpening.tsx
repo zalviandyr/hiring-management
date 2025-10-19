@@ -29,6 +29,7 @@ import {
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { formSchema, JobFormData, JobFormInput } from "@/features/jobs/schema";
+import { toast } from "sonner";
 
 export const JobOpening = ({ children }: React.PropsWithChildren) => {
   return (
@@ -77,7 +78,16 @@ const JobOpeningContent = () => {
   });
 
   const { mutate, isPending } = useCreateJob();
-  const onSubmit = (values: JobFormData) => mutate(values);
+  const onSubmit = (values: JobFormData) => {
+    mutate(values, {
+      onSuccess: () => {
+        toast.success(`Success to create ${values.title} Job`);
+      },
+      onError: () => {
+        toast.error(`Failed to create ${values.title} Job`);
+      },
+    });
+  };
 
   return (
     <>
