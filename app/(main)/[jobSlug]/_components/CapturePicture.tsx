@@ -341,7 +341,7 @@ const CapturePictureContent = () => {
         <img src={capturedImage!} alt="Captured" className="w-full h-[500px] object-cover" />
       )}
 
-      {(cameraState === "allow" || cameraState === "capturing") && (
+      {cameraState === "allow" && (
         <DialogFooter>
           <div className="flex flex-col gap-4">
             <span className="text-xs text-neutral-100">
@@ -350,21 +350,31 @@ const CapturePictureContent = () => {
             </span>
 
             <div className="flex flex-row items-center gap-2 justify-center">
-              <div className="relative bg-[#F6F1EB] h-20 w-20">
-                <Image src={"/icons/pose-1.svg"} alt="Pose 3" fill className="p-2" />
-              </div>
+              {[1].includes(poseStep) && (
+                <>
+                  <div className="relative bg-[#F6F1EB] h-20 w-20">
+                    <Image src={"/icons/pose-1.svg"} alt="Pose 3" fill className="p-2" />
+                  </div>
 
-              <ChevronRight />
+                  <ChevronRight />
+                </>
+              )}
 
-              <div className="relative bg-[#F6F1EB] h-20 w-20">
-                <Image src={"/icons/pose-2.svg"} alt="Pose 3" fill className="p-2" />
-              </div>
+              {[1, 2].includes(poseStep) && (
+                <>
+                  <div className="relative bg-[#F6F1EB] h-20 w-20">
+                    <Image src={"/icons/pose-2.svg"} alt="Pose 3" fill className="p-2" />
+                  </div>
 
-              <ChevronRight />
+                  <ChevronRight />
+                </>
+              )}
 
-              <div className="relative bg-[#F6F1EB] h-20 w-20">
-                <Image src={"/icons/pose-3.svg"} alt="Pose 3" fill className="p-2" />
-              </div>
+              {[1, 2, 3].includes(poseStep) && (
+                <div className="relative bg-[#F6F1EB] h-20 w-20">
+                  <Image src={"/icons/pose-3.svg"} alt="Pose 3" fill className="p-2" />
+                </div>
+              )}
             </div>
           </div>
         </DialogFooter>
