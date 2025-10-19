@@ -4,8 +4,11 @@ import Image from "next/image";
 import { JobOpening } from "./_components/JobOpening";
 import { JobEmpty } from "./_components/JobEmpty";
 import { JobItem } from "./_components/JobItem";
+import { getJobs } from "@/features/jobs/api/get-jobs";
 
-const AdminPage = () => {
+const AdminPage = async () => {
+  const jobs = await getJobs();
+
   return (
     <div className="flex flex-row gap-6">
       <div className="flex flex-col w-full gap-4">
@@ -19,13 +22,15 @@ const AdminPage = () => {
           </InputGroupAddon>
         </InputGroup>
 
-        {/* <JobEmpty /> */}
-
-        <div className="flex flex-col gap-4">
-          <JobItem />
-          <JobItem />
-          <JobItem />
-        </div>
+        {jobs.length === 0 ? (
+          <JobEmpty />
+        ) : (
+          <div className="flex flex-col gap-4">
+            {jobs.map((e) => {
+              return <JobItem key={e.id} data={e} />;
+            })}
+          </div>
+        )}
       </div>
 
       <div className="relative w-[370px] h-40">

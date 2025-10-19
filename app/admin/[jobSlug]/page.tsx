@@ -1,4 +1,3 @@
-import { ApplicantTable } from "./_components/ApplicantTable";
 import { CandidateEmpty } from "./_components/CandidateEmpty";
 
 type AdminManageJobPageProps = {

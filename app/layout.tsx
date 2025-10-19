@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Nunito, Nunito_Sans } from "next/font/google";
 import "./globals.css";
+import { AppProviders } from "./providers";
 
 const nunito = Nunito({
   variable: "--font-nunito",
@@ -20,10 +21,13 @@ export const metadata: Metadata = {
 // TODO: sorting, filtering, pagination in manage applicant page
 // TODO: notification
 // TODO: email to applicant
+// TODO: next js top loader
 export default function RootLayout({ children }: React.PropsWithChildren) {
   return (
     <html lang="en">
-      <body className={`${nunito.variable} ${nunitoSans.variable} antialiased`}>{children}</body>
+      <body className={`${nunito.variable} ${nunitoSans.variable} antialiased`}>
+        <AppProviders>{children}</AppProviders>
+      </body>
     </html>
   );
 }

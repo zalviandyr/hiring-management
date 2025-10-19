@@ -1,3 +1,5 @@
+"use client";
+
 import { ComboboxInput } from "@/components/input/combobox";
 import {
   Dialog,
@@ -14,6 +16,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Chip } from "./Chip";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { useCrateJob } from "@/features/jobs/queries/use-create-job";
 
 export const JobOpening = ({ children }: React.PropsWithChildren) => {
   return (
@@ -28,6 +31,7 @@ export const JobOpening = ({ children }: React.PropsWithChildren) => {
 };
 
 const JobOpeningContent = () => {
+  const { mutate } = useCrateJob();
   const properties = ["Full name", "Photo Profile", "Gender"];
 
   return (
@@ -85,6 +89,7 @@ const JobOpeningContent = () => {
           <div className="flex flex-col">
             {properties.map((e, idx) => (
               <div
+                key={e}
                 className={cn(
                   "flex flex-row text-sm py-4",
                   idx < properties.length - 1 && "border-b border-neutral-40",
