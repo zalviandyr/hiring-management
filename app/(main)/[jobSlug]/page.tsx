@@ -97,7 +97,7 @@ const JobPage = () => {
                         <FormLabel className="font-bold text-xs">Photo Profile</FormLabel>
 
                         {Boolean(field.value) ? (
-                          <img className="h-32 w-32 rounded-full object-cover" src={field.value} />
+                          <img className="h-32 w-32 rounded-md object-cover" src={field.value} />
                         ) : (
                           <div className="relative h-32 w-32">
                             <Image src={"/images/avatar.png"} alt="Avatar" fill />
