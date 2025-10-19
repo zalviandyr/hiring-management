@@ -265,6 +265,7 @@ const JobOpeningContent = () => {
           type="button"
           variant="primary"
           className="w-fit"
+          isLoading={isPending}
           onClick={form.handleSubmit(onSubmit)}
         >
           Publish job

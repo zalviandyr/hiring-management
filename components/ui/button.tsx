@@ -1,6 +1,7 @@
 import * as React from "react";
 import { Slot } from "@radix-ui/react-slot";
 import { cva, type VariantProps } from "class-variance-authority";
+import { Loader2 } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 
@@ -8,7 +9,7 @@ const buttonVariants = cva(
   cn(
     "inline-flex items-center justify-center shadow hover:shadow-md gap-2 whitespace-nowrap rounded-md font-bold transition-all outline-none focus-visible:border-neutral-40 focus-visible:ring-neutral-40/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive hover:cursor-pointer",
     "[&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0",
-    "disabled:border disabled:border-neutral-50 disabled:bg-neutral-30 disabled:pointer-events-none"
+    "disabled:border disabled:border-neutral-50 disabled:bg-neutral-30 disabled:pointer-events-none disabled:text-neutral-70"
   ),
   {
     variants: {
@@ -39,19 +40,31 @@ function Button({
   variant,
   size,
   asChild = false,
+  isLoading = false,
+  disabled,
+  children,
   ...props
 }: React.ComponentProps<"button"> &
   VariantProps<typeof buttonVariants> & {
     asChild?: boolean;
+    isLoading?: boolean;
   }) {
   const Comp = asChild ? Slot : "button";
 
   return (
     <Comp
       data-slot="button"
-      className={cn(buttonVariants({ variant, size, className }))}
+      className={cn(
+        buttonVariants({ variant, size, className }),
+        isLoading && "cursor-progress pointer-events-none"
+      )}
+      disabled={disabled ?? isLoading}
       {...props}
-    />
+    >
+      {children}
+
+      {isLoading && <Loader2 className="size-4 animate-spin" aria-hidden="true" />}
+    </Comp>
   );
 }
 
