@@ -16,6 +16,8 @@ export const metadata: Metadata = {
 };
 
 // TODO: scroll component
+// TODO: edit job
+// TODO: sorting, filtering, pagination in manage applicant page
 export default function RootLayout({ children }: React.PropsWithChildren) {
   return (
     <html lang="en">
