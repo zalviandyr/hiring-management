@@ -51,6 +51,12 @@ export const AdminHeader = () => {
       </div>
 
       <div className="flex flex-row items-center gap-4 w-full h-full justify-end">
+        <Link href={"/"}>
+          <Button type="button" size="sm">
+            Home
+          </Button>
+        </Link>
+
         <Separator orientation="vertical" />
 
         <div className="relative h-7 w-7 rounded-full border border-neutral-40">
