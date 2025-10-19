@@ -1,6 +1,10 @@
 import { useMutation } from "@tanstack/react-query";
+import { JobFormData } from "../schema";
+import { createJob } from "../api/create-job";
 
-export const useCrateJob = () =>
+export const useCreateJob = () =>
   useMutation({
-    mutationFn: async () => {},
+    mutationFn: async (data: JobFormData) => {
+      await createJob(data);
+    },
   });

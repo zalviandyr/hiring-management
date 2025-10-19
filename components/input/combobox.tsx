@@ -2,19 +2,21 @@
 
 import { cn } from "@/lib/utils";
 import { ConfigProvider, Select } from "antd";
+import { BaseOptionType } from "antd/es/select";
+import { useEffect, useState } from "react";
 
 type ComboboxInputProps = {
   placeholder?: string;
+  options?: BaseOptionType[];
+  onChange?: (value: string) => void;
 };
 
-export const ComboboxInput = ({ placeholder }: ComboboxInputProps) => {
-  const onChange = (value: string) => {
-    console.log(`selected ${value}`);
-  };
+export const ComboboxInput = ({ placeholder, options, onChange }: ComboboxInputProps) => {
+  const [value, setValue] = useState<string | null>(null);
 
-  const onSearch = (value: string) => {
-    console.log("search:", value);
-  };
+  useEffect(() => {
+    if (value) onChange?.(value);
+  }, [value]);
 
   return (
     <ConfigProvider
@@ -34,26 +36,19 @@ export const ComboboxInput = ({ placeholder }: ComboboxInputProps) => {
       >
         <Select
           allowClear
-          showSearch
           placeholder={placeholder}
           optionFilterProp="label"
-          onChange={onChange}
-          onSearch={onSearch}
+          value={value}
+          onChange={setValue}
+          onClear={() => setValue(null)}
           rootClassName="w-full"
-          options={[
-            {
-              value: "jack",
-              label: "Jack",
-            },
-            {
-              value: "lucy",
-              label: "Lucy",
-            },
-            {
-              value: "tom",
-              label: "Tom",
-            },
-          ]}
+          options={options}
+          getPopupContainer={(triggerNode) =>
+            triggerNode.closest("[data-slot=dialog-content]") ?? document.body
+          }
+          optionRender={(opt) => {
+            return <span className="font-bold text-xs cursor-pointer">{opt.label}</span>;
+          }}
         />
       </div>
     </ConfigProvider>

@@ -18,6 +18,28 @@ type JobPageProps = {
 const JobPage = async ({ params }: JobPageProps) => {
   const { jobSlug } = await params;
 
+  const types = [
+    {
+      value: "Full-time",
+      label: "Full-time",
+    },
+    {
+      value: "Contract",
+      label: "Contract",
+    },
+    {
+      value: "Part-time",
+      label: "Part-time",
+    },
+    {
+      value: "Internship",
+      label: "Internship",
+    },
+    {
+      value: "Freelance",
+      label: "Freelance",
+    },
+  ];
   return (
     <div className="flex flex-col w-1/2 mx-auto bg-neutral-10">
       <div className="flex flex-col gap-6 border border-neutral-40 py-10">
@@ -81,7 +103,7 @@ const JobPage = async ({ params }: JobPageProps) => {
 
               <Field>
                 <FieldLabel htmlFor="name">Domicile*</FieldLabel>
-                <ComboboxInput placeholder="Choose your domicile" />
+                <ComboboxInput placeholder="Choose your domicile" options={types} />
               </Field>
 
               <Field>

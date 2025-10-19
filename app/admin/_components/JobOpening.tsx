@@ -9,14 +9,26 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Field, FieldGroup, FieldLabel, FieldSet } from "@/components/ui/field";
+import { FieldGroup, FieldLabel, FieldSet } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import { Textarea } from "@/components/ui/textarea";
 import { Chip } from "./Chip";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { useCrateJob } from "@/features/jobs/queries/use-create-job";
+import { useCreateJob } from "@/features/jobs/queries/use-create-job";
+import { InputGroup, InputGroupAddon, InputGroupInput } from "@/components/ui/input-group";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { formSchema, JobFormData, JobFormInput } from "@/features/jobs/schema";
 
 export const JobOpening = ({ children }: React.PropsWithChildren) => {
   return (
@@ -31,8 +43,41 @@ export const JobOpening = ({ children }: React.PropsWithChildren) => {
 };
 
 const JobOpeningContent = () => {
-  const { mutate } = useCrateJob();
   const properties = ["Full name", "Photo Profile", "Gender"];
+  const types = [
+    {
+      value: "Full-time",
+      label: "Full-time",
+    },
+    {
+      value: "Contract",
+      label: "Contract",
+    },
+    {
+      value: "Part-time",
+      label: "Part-time",
+    },
+    {
+      value: "Internship",
+      label: "Internship",
+    },
+    {
+      value: "Freelance",
+      label: "Freelance",
+    },
+  ];
+
+  const form = useForm<JobFormInput, undefined, JobFormData>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      title: "",
+      type: "",
+      description: "",
+    },
+  });
+
+  const { mutate, isPending } = useCreateJob();
+  const onSubmit = (values: JobFormData) => mutate(values);
 
   return (
     <>
@@ -41,47 +86,153 @@ const JobOpeningContent = () => {
       </DialogHeader>
 
       <div className="flex flex-col gap-4 max-h-[600px] overflow-scroll py-4">
-        <FieldSet>
-          <FieldGroup>
-            <Field>
-              <FieldLabel htmlFor="name">Full name</FieldLabel>
-              <Input id="name" autoComplete="off" placeholder="Ex. Front End Engineer" />
-            </Field>
+        <Form {...form}>
+          <FieldSet>
+            <FieldGroup>
+              <FormField
+                control={form.control}
+                name="title"
+                render={({ field }) => {
+                  return (
+                    <FormItem>
+                      <FormLabel required>Job Name</FormLabel>
 
-            <Field>
-              <FieldLabel htmlFor="name">Job Type</FieldLabel>
-              <ComboboxInput placeholder="Select job type" />
-            </Field>
+                      <FormControl>
+                        <Input {...field} placeholder="Ex. Front End Engineer" />
+                      </FormControl>
 
-            <Field>
-              <FieldLabel htmlFor="name">Job Description</FieldLabel>
-              <Textarea placeholder="Ex." />
-            </Field>
+                      <FormMessage />
+                    </FormItem>
+                  );
+                }}
+              />
 
-            <Field>
-              <FieldLabel htmlFor="name">Number of Candidate Needed*</FieldLabel>
-              <Input id="name" autoComplete="off" placeholder="Ex. Front End Engineer" />
-            </Field>
+              <FormField
+                control={form.control}
+                name="type"
+                render={({ field }) => {
+                  return (
+                    <FormItem>
+                      <FormLabel required>Job Type</FormLabel>
 
-            <Separator variant="dashed" />
+                      <FormControl>
+                        <ComboboxInput
+                          placeholder="Select job type"
+                          options={types}
+                          onChange={(e) => field.onChange(e)}
+                        />
+                      </FormControl>
 
-            <FieldLabel>Job Salary</FieldLabel>
+                      <FormMessage />
+                    </FormItem>
+                  );
+                }}
+              />
 
-            <div className="flex flex-row gap-4 items-center justify-center">
-              <Field>
-                <FieldLabel htmlFor="name">Minimum Estimated Salary</FieldLabel>
-                <Input id="name" autoComplete="off" placeholder="Ex. Front End Engineer" />
-              </Field>
+              <FormField
+                control={form.control}
+                name="description"
+                render={({ field }) => {
+                  return (
+                    <FormItem>
+                      <FormLabel required>Job Description</FormLabel>
 
-              <Separator className="!w-6 mt-6" />
+                      <FormControl>
+                        <Textarea placeholder="Ex." {...field} />
+                      </FormControl>
 
-              <Field>
-                <FieldLabel htmlFor="name">Maximum Estimated Salary</FieldLabel>
-                <Input id="name" autoComplete="off" placeholder="Ex. Front End Engineer" />
-              </Field>
-            </div>
-          </FieldGroup>
-        </FieldSet>
+                      <FormMessage />
+                    </FormItem>
+                  );
+                }}
+              />
+
+              <FormField
+                control={form.control}
+                name="max_candidate"
+                render={({ field }) => {
+                  return (
+                    <FormItem>
+                      <FieldLabel required>Number of Candidate Needed</FieldLabel>
+
+                      <FormControl>
+                        <Input
+                          type="number"
+                          placeholder="Ex. 2"
+                          {...form.register(field.name, { valueAsNumber: true })}
+                        />
+                      </FormControl>
+
+                      <FormMessage />
+                    </FormItem>
+                  );
+                }}
+              />
+
+              <Separator variant="dashed" />
+
+              <FieldLabel>Job Salary</FieldLabel>
+
+              <div className="flex flex-row gap-4 items-center justify-center">
+                <FormField
+                  control={form.control}
+                  name="salary_range.min"
+                  render={({ field }) => {
+                    return (
+                      <FormItem className="w-full">
+                        <FormLabel required>Minimum Estimated Salary</FormLabel>
+
+                        <FormControl>
+                          <InputGroup>
+                            <InputGroupAddon className="text-sm font-bold">Rp.</InputGroupAddon>
+
+                            <InputGroupInput
+                              autoComplete="off"
+                              type="number"
+                              placeholder="5.000.000"
+                              {...form.register(field.name, { valueAsNumber: true })}
+                            />
+                          </InputGroup>
+                        </FormControl>
+
+                        <FormMessage />
+                      </FormItem>
+                    );
+                  }}
+                />
+
+                <Separator className="!w-6 mt-6" />
+
+                <FormField
+                  control={form.control}
+                  name="salary_range.max"
+                  render={({ field }) => {
+                    return (
+                      <FormItem className="w-full">
+                        <FieldLabel required>Maximum Estimated Salary</FieldLabel>
+
+                        <FormControl>
+                          <InputGroup>
+                            <InputGroupAddon className="text-sm font-bold">Rp.</InputGroupAddon>
+
+                            <InputGroupInput
+                              autoComplete="off"
+                              type="number"
+                              placeholder="7.000.000"
+                              {...form.register(field.name, { valueAsNumber: true })}
+                            />
+                          </InputGroup>
+                        </FormControl>
+
+                        <FormMessage />
+                      </FormItem>
+                    );
+                  }}
+                />
+              </div>
+            </FieldGroup>
+          </FieldSet>
+        </Form>
 
         <div className="border border-neutral-30 rounded-lg flex flex-col p-4 gap-4">
           <span className="text-sm font-bold">Minimum Profile Information Required</span>
@@ -110,7 +261,12 @@ const JobOpeningContent = () => {
       </div>
 
       <DialogFooter className="border-t border-neutral-40 px-6 -mx-6 pt-6 flex items-end">
-        <Button type="button" variant="primary" className="w-fit">
+        <Button
+          type="button"
+          variant="primary"
+          className="w-fit"
+          onClick={form.handleSubmit(onSubmit)}
+        >
           Publish job
         </Button>
       </DialogFooter>
