@@ -3,6 +3,7 @@ import z from "zod";
 
 export const formSchema = z.object({
   full_name: z.string().min(1, "Full name is required"),
+  photo_profile: z.string().min(1, "Photo profile is required"),
   date_of_birth: requiredDate("Date of birth is required"),
   gender: z.string().min(1, "Gender is required"),
   domicile: z.string().min(1, "Domicile is required"),

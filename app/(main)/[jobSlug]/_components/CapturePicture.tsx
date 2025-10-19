@@ -19,20 +19,29 @@ import { Button } from "@/components/ui/button";
 import { CaptureOverlay } from "./CaptureOverlay";
 
 type ICameraState = "allow" | "denied" | "requested" | "captured" | "capturing";
+type CapturePictureProps = {
+  onCapture?: (value: string) => void;
+  setOpen?: React.Dispatch<React.SetStateAction<boolean>>;
+};
 
-export const CapturePicture = ({ children }: React.PropsWithChildren) => {
+export const CapturePicture = ({
+  children,
+  onCapture,
+}: React.PropsWithChildren & CapturePictureProps) => {
+  const [open, setOpen] = useState(false);
+
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>{children}</DialogTrigger>
 
-      <DialogContent className="!max-w-[700px]">
-        <CapturePictureContent />
+      <DialogContent className="!max-w-[700px] gap-4">
+        <CapturePictureContent onCapture={onCapture} setOpen={setOpen} />
       </DialogContent>
     </Dialog>
   );
 };
 
-const CapturePictureContent = () => {
+const CapturePictureContent = ({ onCapture, setOpen }: CapturePictureProps) => {
   const REQUIRED_FINGERS_BY_STEP: Record<number, number> = { 1: 1, 2: 2, 3: 3 };
   const POSE_HOLD_DURATION_MS = 3000;
   const CAPTURE_DURATION_MS = 3000;
@@ -223,7 +232,12 @@ const CapturePictureContent = () => {
     setCapturedImage(null);
   };
 
-  const submitHandle = () => {};
+  const submitHandle = () => {
+    if (capturedImage) {
+      onCapture?.(capturedImage);
+      setOpen?.(false);
+    }
+  };
 
   const countFingersWithPalm = (landmarks: NormalizedLandmark[]) => {
     const fingerTips = [8, 12, 16, 20];

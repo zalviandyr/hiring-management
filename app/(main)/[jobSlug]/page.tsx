@@ -39,6 +39,7 @@ const JobPage = () => {
   const form = useForm<ApplicantFormInput, undefined, ApplicantFormData>({
     resolver: zodResolver(formSchema),
     defaultValues: {
+      photo_profile: "",
       full_name: "",
       gender: "",
       domicile: "",
@@ -87,19 +88,34 @@ const JobPage = () => {
           <Form {...form}>
             <FieldSet>
               <FieldGroup>
-                <div className="flex flex-col items-start gap-2">
-                  <span className="font-bold text-xs">Photo Profile</span>
-                  <div className="relative h-32 w-32">
-                    <Image src={"/images/avatar.png"} alt="Avatar" fill />
-                  </div>
+                <FormField
+                  control={form.control}
+                  name="photo_profile"
+                  render={({ field }) => {
+                    return (
+                      <FormItem className="flex flex-col items-start gap-2">
+                        <FormLabel className="font-bold text-xs">Photo Profile</FormLabel>
 
-                  <CapturePicture>
-                    <Button>
-                      <Upload className="h-4 w-4" />
-                      Take a Picture
-                    </Button>
-                  </CapturePicture>
-                </div>
+                        {Boolean(field.value) ? (
+                          <img className="h-32 w-32 rounded-full object-cover" src={field.value} />
+                        ) : (
+                          <div className="relative h-32 w-32">
+                            <Image src={"/images/avatar.png"} alt="Avatar" fill />
+                          </div>
+                        )}
+
+                        <CapturePicture onCapture={field.onChange}>
+                          <Button>
+                            <Upload className="h-4 w-4" />
+                            Take a Picture
+                          </Button>
+                        </CapturePicture>
+
+                        <FormMessage />
+                      </FormItem>
+                    );
+                  }}
+                />
 
                 <FormField
                   control={form.control}
