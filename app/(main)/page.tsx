@@ -9,12 +9,17 @@ import { JobEmpty } from "./_components/JobEmpty";
 import { useState } from "react";
 import { Job } from "@/features/jobs/types";
 import { JobUnselected } from "./_components/JobUnselected";
+import { Loading } from "@/components/ui/loading";
 
 const HomePage = () => {
-  const { data } = useJobs();
+  const { data, isPending } = useJobs();
   const jobs = data ?? [];
 
   const [selectedJob, setSelectedJob] = useState<Job | null>(null);
+
+  if (isPending) {
+    return <Loading />;
+  }
 
   return jobs.length === 0 ? (
     <JobEmpty />

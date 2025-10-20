@@ -18,12 +18,23 @@ export const metadata: Metadata = {
 
 // TODO: scroll component
 // TODO: edit job
-// TODO: sorting, filtering, pagination in manage applicant page
+// TODO: sorting, pagination in manage applicant page
 // TODO: notification
 // TODO: email to applicant
-// TODO: next js top loader
 // TODO: logic max candidate when applicant apply
 // TODO: add dropdown currency
+// TODO: responsive
+// TODO: search job
+// TODO: show active job
+// TODO: dynamic render form
+/*
+Enhancement
+1. Indicator ketika take picture
+2. Search di candidate page
+3. Menggunakan supabase
+4. Menggunakan react query
+5. Menggunakan shadcn
+*/
 export default function RootLayout({ children }: React.PropsWithChildren) {
   return (
     <html lang="en">

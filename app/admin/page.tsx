@@ -7,10 +7,15 @@ import { JobOpening } from "./_components/JobOpening";
 import { JobEmpty } from "./_components/JobEmpty";
 import { JobItem } from "./_components/JobItem";
 import { useJobs } from "@/features/jobs/queries/use-jobs";
+import { Loading } from "@/components/ui/loading";
 
 const AdminPage = () => {
-  const { data } = useJobs();
+  const { data, isPending } = useJobs();
   const jobs = data ?? [];
+
+  if (isPending) {
+    return <Loading />;
+  }
 
   return (
     <div className="flex flex-row gap-6">
@@ -24,7 +29,6 @@ const AdminPage = () => {
             </div>
           </InputGroupAddon>
         </InputGroup>
-
         {jobs.length === 0 ? (
           <JobEmpty />
         ) : (

@@ -55,7 +55,7 @@ const JobPage = () => {
         { data: values, job: data },
         {
           onSuccess: () => {
-            toast.success(`Success to apply ${data.title} Job`);
+            toast.success("Your application has been submitted successfully.");
 
             router.back();
           },
