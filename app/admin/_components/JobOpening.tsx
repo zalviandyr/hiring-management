@@ -34,6 +34,7 @@ import { useState } from "react";
 import { FormRequirement } from "@/features/jobs/types";
 import { useJobsKey } from "@/features/jobs/queries/use-jobs";
 import { useQueryClient } from "@tanstack/react-query";
+import { useActiveJobsKey } from "@/features/applicants/queries/use-active-jobs";
 
 export const JobOpening = ({ children }: React.PropsWithChildren) => {
   const [open, setOpen] = useState(false);
@@ -56,7 +57,7 @@ const JobOpeningContent = ({
 }) => {
   const [properties, setProperties] = useState<FormRequirement[]>([
     {
-      key: "full-name",
+      key: "full_name",
       label: "Full name",
       value: "mandatory",
       status: [
@@ -66,7 +67,7 @@ const JobOpeningContent = ({
       ],
     },
     {
-      key: "photo-profile",
+      key: "photo_profile",
       label: "Photo profile",
       value: "mandatory",
       status: [
@@ -106,7 +107,7 @@ const JobOpeningContent = ({
       ],
     },
     {
-      key: "phone-number",
+      key: "phone_number",
       label: "Phone number",
       value: "mandatory",
       status: [
@@ -116,7 +117,7 @@ const JobOpeningContent = ({
       ],
     },
     {
-      key: "linkedin-link",
+      key: "linkedin_link",
       label: "Linkedin link",
       value: "mandatory",
       status: [
@@ -126,7 +127,7 @@ const JobOpeningContent = ({
       ],
     },
     {
-      key: "date-of-birth",
+      key: "date_of_birth",
       label: "Date of birth",
       value: "mandatory",
       status: [
@@ -180,6 +181,7 @@ const JobOpeningContent = ({
 
           // refetch job
           queryClient.invalidateQueries({ queryKey: useJobsKey });
+          queryClient.invalidateQueries({ queryKey: useActiveJobsKey });
 
           setOpen?.(false);
         },
