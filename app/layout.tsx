@@ -24,7 +24,6 @@ export const metadata: Metadata = {
 // TODO: logic max candidate when applicant apply
 // TODO: add dropdown currency
 // TODO: responsive
-// TODO: show active job
 // TODO: dynamic render form
 /*
 Enhancement

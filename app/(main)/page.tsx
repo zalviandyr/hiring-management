@@ -10,9 +10,10 @@ import { useState } from "react";
 import { Job } from "@/features/jobs/types";
 import { JobUnselected } from "./_components/JobUnselected";
 import { Loading } from "@/components/ui/loading";
+import { useActiveJobs } from "@/features/applicants/queries/use-active-jobs";
 
 const HomePage = () => {
-  const { data, isPending } = useJobs();
+  const { data, isPending } = useActiveJobs();
   const jobs = data ?? [];
 
   const [selectedJob, setSelectedJob] = useState<Job | null>(null);
