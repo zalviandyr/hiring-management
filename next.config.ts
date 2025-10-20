@@ -1,7 +1,9 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  outputFileTracingIncludes: {
+    "/api/regencies": ["./node_modules/idn-area-data/data/**/*.csv"],
+  },
 };
 
 export default nextConfig;
