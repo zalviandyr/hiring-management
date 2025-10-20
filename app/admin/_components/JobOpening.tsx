@@ -355,6 +355,7 @@ const JobOpeningContent = () => {
                 <div className="flex flex-row gap-2">
                   {e.status.map((s) => (
                     <Chip
+                      key={s.key}
                       label={s.key}
                       disabled={s.disabled}
                       isSelected={e.value === s.key}
