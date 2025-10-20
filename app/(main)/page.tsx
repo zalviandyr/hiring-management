@@ -54,7 +54,7 @@ const HomePage = () => {
                   </span>
 
                   <span className="font-bold text-lg">{selectedJob.title}</span>
-                  <span className="text-sm text-neutral-70">Rakamin</span>
+                  <span className="text-sm text-neutral-70">{selectedJob.department}</span>
                 </div>
               </div>
 
