@@ -29,7 +29,7 @@ export const JobCard = ({ data, active, onClick }: JobCardProps) => {
 
         <div className="flex flex-col h-full justify-between items-start">
           <span className="font-bold">{data.title}</span>
-          <span className="text-sm">Rakamin</span>
+          <span className="text-sm">{data.department}</span>
         </div>
       </div>
 
