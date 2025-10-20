@@ -1,3 +1,5 @@
+import { ApplicantFormData } from "../applicants/schema";
+
 export type JobStatus = "active" | "inactive" | "draft";
 
 export type FieldStatus = "mandatory" | "optional" | "off";
@@ -33,3 +35,7 @@ export type FormRequirement = {
   value: FieldStatus;
   status: { key: FormRequirement["value"]; disabled: boolean }[];
 };
+
+export interface Candidate extends ApplicantFormData {
+  created: Date;
+}

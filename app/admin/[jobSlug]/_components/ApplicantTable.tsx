@@ -55,7 +55,7 @@ export const ApplicantTable = ({ data }: ApplicantTableProps) => {
         id: "phone_number",
         accessorKey: "phone_number",
         header: "Phone Number",
-        cell: (info) => info.getValue(),
+        cell: (info) => info?.getValue() ?? "-",
         enableResizing: true,
       },
       {
@@ -69,14 +69,16 @@ export const ApplicantTable = ({ data }: ApplicantTableProps) => {
         id: "domicile",
         accessorKey: "domicile",
         header: "Domicile",
-        cell: (info) => info.getValue(),
+        cell: (info) => info?.getValue() ?? "-",
         enableResizing: true,
       },
       {
         id: "gender",
         accessorKey: "gender",
         header: "Gender",
-        cell: (info) => <span className="capitalize">{info.getValue()}</span>,
+        cell: (info) => (
+          <>{info?.getValue() ? <span className="capitalize">{info.getValue()}</span> : "-"}</>
+        ),
         enableResizing: true,
       },
       {
@@ -84,12 +86,25 @@ export const ApplicantTable = ({ data }: ApplicantTableProps) => {
         accessorKey: "linkedin_link",
         header: "Link Linkedin",
         cell: (info) => (
-          <Link href={info.getValue()} className="text-primary-main" target="_blank">
-            {info.getValue()}
-          </Link>
+          <>
+            {info?.getValue() ? (
+              <Link href={info.getValue()} className="text-primary-main" target="_blank">
+                {info.getValue()}
+              </Link>
+            ) : (
+              "-"
+            )}
+          </>
         ),
         enableResizing: true,
         enableColumnFilter: false,
+      },
+      {
+        id: "applied_date",
+        accessorKey: "created",
+        header: "Applied Date",
+        cell: (info) => <span>{formatDate(info.getValue(), "long")}</span>,
+        enableResizing: true,
       },
     ],
     []

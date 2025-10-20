@@ -1,5 +1,4 @@
-import { ApplicantFormData } from "@/features/applicants/schema";
-import { Job } from "@/features/jobs/types";
+import { Candidate, Job } from "@/features/jobs/types";
 import { createClient } from "@/lib/supabase/client";
 
 export const getCandidates = async (jobSlug: string) => {
@@ -23,7 +22,7 @@ export const getCandidates = async (jobSlug: string) => {
       .from("applicants")
       .select()
       .eq("job_id", job.id)
-      .overrideTypes<ApplicantFormData[]>()
+      .overrideTypes<Candidate[]>()
       .throwOnError();
 
     return applications;
