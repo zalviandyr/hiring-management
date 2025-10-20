@@ -1,36 +1,44 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Hiring Management
 
-## Getting Started
+## Project Overview
 
-First, run the development server:
+Hiring Management is an internal platform that centralizes job postings and recruitment workflows. It serves two user types: Recruiters (admin) who work from the `/admin` dashboard to publish openings, review applicants, and manage pipelines, and Job Seekers (applicants) who browse open roles, submit applications, and capture identity photos through the public flow.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## Tech Stack Used
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+- Next.js 15 + React 19
+- TypeScript
+- Tailwind CSS 4 + shadcn/ui
+- TanStack Query
+- Supabase
+- Mediapipe Tasks Vision
+- React Hook Form + Zod
+- dnd-kit
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## How to Run Locally
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+1. **Prepare the environment**
+   - Ensure Node.js 18 or newer is installed.
+   - Copy environment variables from `.env.example` to `.env.local`, then fill in Supabase credentials (`NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`).
+2. **Install dependencies**
+   ```bash
+   yarn install
+   ```
+3. **Start the development server**
+   ```bash
+   yarn dev
+   ```
+4. **Access the app**
+   - Open `http://localhost:3000` in your browser.
+   - Use the admin dashboard to manage job openings and applicants, and the public flow for candidate submissions.
 
-## Learn More
+## Potential Enhancements
 
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- **Scrollable components**: Introduce a reusable scroll container that keeps headers sticky and maintains accessible keyboard navigation.
+- **Job editing workflow**: Extend the admin dashboard with an edit modal or dedicated page to update job details without recreating entries.
+- **Applicant table controls**: Add client-side sorting and pagination to the Manage Applicants view for faster screening.
+- **Notification system**: Surface real-time toast or inbox-style notifications to flag new applicants and status changes.
+- **Applicant email automation**: Trigger confirmation and status update emails to candidates directly from the platform.
+- **Application capacity guardrails**: Enforce maximum candidate limits when new applicants submit their forms to prevent overbooking.
+- **Salary currency selector**: Provide a currency dropdown to normalize salary inputs across international postings.
+- **Responsive refinements**: Review layouts on tablet and mobile breakpoints to ensure key flows remain usable.
