@@ -15,6 +15,22 @@ Hiring Management is an internal platform that centralizes job postings and recr
 - React Hook Form + Zod
 - dnd-kit
 
+## Folder Structure
+
+```text
+.
+├─ app/                   # App Router entrypoints and layouts
+│  ├─ (main)/             # Public job seeker flows and shared components
+│  │  └─ [jobSlug]/       # Dynamic applicant-facing routes and media capture
+│  ├─ admin/              # Recruiter dashboard pages and UI building blocks
+│  └─ api/                # Route handlers (e.g., regencies lookup)
+├─ components/            # Reusable UI primitives (inputs, form controls, etc.)
+├─ features/              # Domain logic grouped by context (jobs, applicants, candidates)
+├─ lib/                   # Cross-cutting utilities, Supabase client, validation
+├─ public/                # Static assets, icons, and images
+└─ (root configs)         # Next.js, TypeScript, Tailwind, and PostCSS configuration files
+```
+
 ## How to Run Locally
 
 1. **Prepare the environment**
