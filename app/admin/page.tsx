@@ -8,16 +8,28 @@ import { JobEmpty } from "./_components/JobEmpty";
 import { JobItem } from "./_components/JobItem";
 import { useJobs } from "@/features/jobs/queries/use-jobs";
 import { Loading } from "@/components/ui/loading";
-import { Job } from "@/features/jobs/types";
+import { Job, JobStatus } from "@/features/jobs/types";
 import { useMemo, useState } from "react";
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
+import { Separator } from "@/components/ui/separator";
 
 const AdminPage = () => {
+  const [status, setStatus] = useState<JobStatus | null>(null);
   const [value, setValue] = useState("");
 
   const { data, isPending } = useJobs();
   const filtered: Job[] = useMemo(() => {
-    return data?.filter((e) => e.title.toLowerCase().includes(value.toLowerCase())) ?? [];
-  }, [value, data]);
+    let result =
+      data?.filter((e) => {
+        return e.title.toLowerCase().includes(value.toLowerCase());
+      }) ?? [];
+
+    if (status) {
+      result = result.filter((e) => e.status === status);
+    }
+
+    return result;
+  }, [value, data, status]);
 
   if (isPending) {
     return <Loading />;
@@ -39,6 +51,30 @@ const AdminPage = () => {
             </div>
           </InputGroupAddon>
         </InputGroup>
+
+        <div className="flex flex-row items-center gap-2">
+          <span className="text-sm">Status</span>
+
+          <ToggleGroup
+            type="single"
+            value={status as string}
+            variant={"outline"}
+            onValueChange={(e) => setStatus(e as JobStatus)}
+          >
+            <ToggleGroupItem value="active" className="text-xs">
+              Active
+            </ToggleGroupItem>
+            <ToggleGroupItem value="inactive" className="text-xs">
+              Inactive
+            </ToggleGroupItem>
+            <ToggleGroupItem value="draft" className="text-xs">
+              Draft
+            </ToggleGroupItem>
+          </ToggleGroup>
+        </div>
+
+        <Separator />
+
         {filtered.length === 0 ? (
           <JobEmpty />
         ) : (
