@@ -6,7 +6,7 @@ const MainLayout = ({ children }: React.PropsWithChildren) => {
     <div className="relative bg-neutral-20 min-h-screen">
       <AdminHeader />
 
-      <div className="px-32 py-8">{children}</div>
+      <div className="2xl:px-32 px-10 py-8">{children}</div>
     </div>
   );
 };

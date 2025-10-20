@@ -29,7 +29,7 @@ export const AdminHeader = () => {
   }
 
   return (
-    <div className="bg-neutral-10 flex flex-row px-32 h-12 py-3 items-center shadow-lg">
+    <div className="bg-neutral-10 flex flex-row 2xl:px-32 px-10 h-12 py-3 items-center shadow-lg">
       <div className="w-full flex flex-row items-center gap-2">
         {breadcrumbs.map((crumb, index) => (
           <Fragment key={crumb.label}>

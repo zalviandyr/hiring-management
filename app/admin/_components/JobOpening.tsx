@@ -204,7 +204,7 @@ const JobOpeningContent = ({
         <DialogTitle className="font-bold text-lg">Job Opening</DialogTitle>
       </DialogHeader>
 
-      <div className="flex flex-col gap-4 max-h-[600px] overflow-scroll py-4">
+      <div className="flex flex-col gap-4 2xl:max-h-[600px] max-h-[400px] overflow-scroll py-4">
         <Form {...form}>
           <FieldSet>
             <FieldGroup>

@@ -27,7 +27,7 @@ const HomePage = () => {
   ) : (
     <div className="flex flex-row">
       {/* Job List */}
-      <div className="flex flex-col px-5 gap-5 w-[25%] h-[90vh] overflow-scroll">
+      <div className="flex flex-col px-5 gap-5 w-[35%] 2xl:w-[25%] h-[90vh] overflow-scroll">
         {jobs.map((e) => (
           <JobCard key={e.id} data={e} onClick={(job) => setSelectedJob(job)} />
         ))}

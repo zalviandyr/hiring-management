@@ -160,39 +160,41 @@ export const ApplicantTable = ({ data }: ApplicantTableProps) => {
       onDragEnd={handleDragEnd}
       sensors={sensors}
     >
-      <table className="w-full border-separate border-spacing-0 shadow-md">
-        <thead>
-          {table.getHeaderGroups().map((headerGroup) => (
-            <tr key={headerGroup.id} className="bg-neutral-20">
-              <SortableContext items={columnOrder} strategy={horizontalListSortingStrategy}>
-                {headerGroup.headers.map((header) => (
-                  <DraggableTableHeader key={header.id} header={header} />
-                ))}
-              </SortableContext>
-            </tr>
-          ))}
-        </thead>
-
-        <tbody>
-          {table.getRowModel().rows.map((row) => {
-            return (
-              <tr key={row.id} className="bg-neutral-10">
-                {row.getVisibleCells().map((cell) => {
-                  return (
-                    <SortableContext
-                      key={cell.id}
-                      items={columnOrder}
-                      strategy={horizontalListSortingStrategy}
-                    >
-                      <DragAlongCell key={cell.id} cell={cell} />
-                    </SortableContext>
-                  );
-                })}
+      <div className="overflow-x-scroll">
+        <table className="w-full border-separate border-spacing-0 shadow-md">
+          <thead>
+            {table.getHeaderGroups().map((headerGroup) => (
+              <tr key={headerGroup.id} className="bg-neutral-20">
+                <SortableContext items={columnOrder} strategy={horizontalListSortingStrategy}>
+                  {headerGroup.headers.map((header) => (
+                    <DraggableTableHeader key={header.id} header={header} />
+                  ))}
+                </SortableContext>
               </tr>
-            );
-          })}
-        </tbody>
-      </table>
+            ))}
+          </thead>
+
+          <tbody>
+            {table.getRowModel().rows.map((row) => {
+              return (
+                <tr key={row.id} className="bg-neutral-10">
+                  {row.getVisibleCells().map((cell) => {
+                    return (
+                      <SortableContext
+                        key={cell.id}
+                        items={columnOrder}
+                        strategy={horizontalListSortingStrategy}
+                      >
+                        <DragAlongCell key={cell.id} cell={cell} />
+                      </SortableContext>
+                    );
+                  })}
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
     </DndContext>
   );
 };

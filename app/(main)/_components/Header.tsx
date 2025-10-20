@@ -5,7 +5,7 @@ import Link from "next/link";
 
 export const Header = () => {
   return (
-    <div className="bg-neutral-10 flex flex-row px-32 h-12 py-3 items-center shadow-lg">
+    <div className="bg-neutral-10 flex flex-row 2xl:px-32 px-10 h-12 py-3 items-center shadow-lg">
       <div className="flex flex-row items-center gap-4 w-full h-full justify-end">
         <Link href={"/admin"}>
           <Button type="button" size="sm">

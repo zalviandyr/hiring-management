@@ -328,7 +328,7 @@ const CapturePictureContent = ({ onCapture, setOpen }: CapturePictureProps) => {
 
       <div
         className={cn(
-          "w-full my-4 h-[500px] relative flex items-center justify-center overflow-hidden",
+          "w-full my-4 2xl:h-[500px] h-[400px] relative flex items-center justify-center overflow-hidden",
           cameraState === "allow" || cameraState === "capturing" ? "block" : "hidden"
         )}
       >

@@ -99,7 +99,7 @@ const JobPage = () => {
   }
 
   return (
-    <div className="flex flex-col w-1/2 mx-auto bg-neutral-10">
+    <div className="flex flex-col 2xl:w-1/2 w-2/3 mx-auto bg-neutral-10">
       <div className="flex flex-col gap-6 border border-neutral-40 py-10">
         <div className="flex flex-row justify-between px-10">
           <div className="flex flex-row items-center gap-4">
