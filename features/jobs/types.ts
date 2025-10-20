@@ -1,5 +1,7 @@
 export type JobStatus = "active" | "inactive" | "draft";
 
+export type FieldStatus = "mandatory" | "optional" | "off";
+
 export type Job = {
   id: string;
   slug: string;
@@ -21,12 +23,12 @@ export type JobSalary = {
 export type JobApplicationForm = {
   id: string;
   job_id: string;
-  fields: FormRequirement;
+  fields: FormRequirement[];
 };
 
 export type FormRequirement = {
   key: string;
   label: string;
-  value: "mandatory" | "optional" | "off";
+  value: FieldStatus;
   status: { key: FormRequirement["value"]; disabled: boolean }[];
 };

@@ -12,7 +12,6 @@ import { ArrowLeftIcon, Upload } from "lucide-react";
 import Image from "next/image";
 import { CapturePicture } from "./_components/CapturePicture";
 import { useParams, useRouter } from "next/navigation";
-import { useJob } from "@/features/jobs/queries/use-job";
 import { useForm } from "react-hook-form";
 import {
   Form,
@@ -23,10 +22,12 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { ApplicantFormData, ApplicantFormInput, formSchema } from "@/features/applicants/schema";
+import { ApplicantFormData, buildApplicantFormSchema } from "@/features/applicants/schema";
 import { useApplicant, useCreateApplicant } from "@/features/applicants/queries/use-applicant";
 import { toast } from "sonner";
 import { Loading } from "@/components/ui/loading";
+import { useMemo } from "react";
+import z from "zod";
 
 const JobPage = () => {
   const router = useRouter();
@@ -35,8 +36,13 @@ const JobPage = () => {
   const { data, isPending } = useApplicant(jobSlug);
   const { mutate, isPending: isCreateApplicationLoading } = useCreateApplicant();
 
+  const schema = useMemo(
+    () => buildApplicantFormSchema(data?.form.fields ?? []),
+    [data?.form.fields]
+  );
+  type ApplicantFormInput = z.input<typeof schema>;
   const form = useForm<ApplicantFormInput, undefined, ApplicantFormData>({
-    resolver: zodResolver(formSchema),
+    resolver: zodResolver(schema),
     defaultValues: {
       photo_profile: "",
       full_name: "",
@@ -64,6 +70,16 @@ const JobPage = () => {
         }
       );
     }
+  };
+
+  const getIsFieldVisible = (key: string): boolean => {
+    const field = data?.form.fields?.find((e) => e.key === key);
+    return field?.value === "mandatory" || field?.value === "optional";
+  };
+
+  const getIsFieldRequired = (key: string): boolean => {
+    const field = data?.form.fields?.find((e) => e.key === key);
+    return field?.value === "mandatory";
   };
 
   if (isPending) {
@@ -95,42 +111,50 @@ const JobPage = () => {
           <Form {...form}>
             <FieldSet>
               <FieldGroup>
-                <FormField
-                  control={form.control}
-                  name="photo_profile"
-                  render={({ field }) => {
-                    return (
-                      <FormItem className="flex flex-col items-start gap-2">
-                        <FormLabel className="font-bold text-xs">Photo Profile</FormLabel>
+                {getIsFieldVisible("photo_profile") && (
+                  <FormField
+                    control={form.control}
+                    name="photo_profile"
+                    render={({ field }) => {
+                      return (
+                        <FormItem className="flex flex-col items-start gap-2">
+                          <FormLabel required={getIsFieldRequired(field.name)}>
+                            Photo Profile
+                          </FormLabel>
 
-                        {Boolean(field.value) ? (
-                          <img className="h-32 w-32 rounded-md object-cover" src={field.value} />
-                        ) : (
-                          <div className="relative h-32 w-32">
-                            <Image src={"/images/avatar.png"} alt="Avatar" fill />
-                          </div>
-                        )}
+                          {Boolean(field.value) ? (
+                            <img className="h-32 w-32 rounded-md object-cover" src={field.value} />
+                          ) : (
+                            <div className="relative h-32 w-32">
+                              <Image src={"/images/avatar.png"} alt="Avatar" fill />
+                            </div>
+                          )}
 
-                        <CapturePicture onCapture={field.onChange}>
-                          <Button>
-                            <Upload className="h-4 w-4" />
-                            Take a Picture
-                          </Button>
-                        </CapturePicture>
+                          <CapturePicture onCapture={field.onChange}>
+                            <Button>
+                              <Upload className="h-4 w-4" />
+                              Take a Picture
+                            </Button>
+                          </CapturePicture>
 
-                        <FormMessage />
-                      </FormItem>
-                    );
-                  }}
-                />
+                          <FormMessage />
+                        </FormItem>
+                      );
+                    }}
+                  />
+                )}
 
                 <FormField
                   control={form.control}
                   name="full_name"
                   render={({ field }) => {
+                    if (!getIsFieldVisible(field.name)) {
+                      return <></>;
+                    }
+
                     return (
                       <FormItem>
-                        <FormLabel required>Full name</FormLabel>
+                        <FormLabel required={getIsFieldRequired(field.name)}>Full name</FormLabel>
 
                         <FormControl>
                           <Input {...field} placeholder="Enter you full name" />
@@ -146,9 +170,15 @@ const JobPage = () => {
                   control={form.control}
                   name="date_of_birth"
                   render={({ field }) => {
+                    if (!getIsFieldVisible(field.name)) {
+                      return <></>;
+                    }
+
                     return (
                       <FormItem>
-                        <FormLabel required>Date of birth</FormLabel>
+                        <FormLabel required={getIsFieldRequired(field.name)}>
+                          Date of birth
+                        </FormLabel>
 
                         <FormControl>
                           <DatePickerInput onChange={(e) => field.onChange(e)} />
@@ -164,9 +194,15 @@ const JobPage = () => {
                   control={form.control}
                   name="gender"
                   render={({ field }) => {
+                    if (!getIsFieldVisible(field.name)) {
+                      return <></>;
+                    }
+
                     return (
                       <FormItem>
-                        <FormLabel required>Pronoun (gender)</FormLabel>
+                        <FormLabel required={getIsFieldRequired(field.name)}>
+                          Pronoun (gender)
+                        </FormLabel>
 
                         <FormControl>
                           <RadioGroup
@@ -197,9 +233,13 @@ const JobPage = () => {
                   control={form.control}
                   name="domicile"
                   render={({ field }) => {
+                    if (!getIsFieldVisible(field.name)) {
+                      return <></>;
+                    }
+
                     return (
                       <FormItem>
-                        <FormLabel required>Domicile</FormLabel>
+                        <FormLabel required={getIsFieldRequired(field.name)}>Domicile</FormLabel>
 
                         <FormControl>
                           <ComboboxInput
@@ -222,9 +262,15 @@ const JobPage = () => {
                   control={form.control}
                   name="phone_number"
                   render={({ field }) => {
+                    if (!getIsFieldVisible(field.name)) {
+                      return <></>;
+                    }
+
                     return (
                       <FormItem>
-                        <FormLabel required>Phone number*</FormLabel>
+                        <FormLabel required={getIsFieldRequired(field.name)}>
+                          Phone number
+                        </FormLabel>
 
                         <FormControl>
                           <PhoneNumberInput onChange={(e) => field.onChange(e)} />
@@ -240,9 +286,13 @@ const JobPage = () => {
                   control={form.control}
                   name="email"
                   render={({ field }) => {
+                    if (!getIsFieldVisible(field.name)) {
+                      return <></>;
+                    }
+
                     return (
                       <FormItem>
-                        <FormLabel required>Email</FormLabel>
+                        <FormLabel required={getIsFieldRequired(field.name)}>Email</FormLabel>
 
                         <FormControl>
                           <Input {...field} placeholder="Enter your email address" />
@@ -258,9 +308,15 @@ const JobPage = () => {
                   control={form.control}
                   name="linkedin_link"
                   render={({ field }) => {
+                    if (!getIsFieldVisible(field.name)) {
+                      return <></>;
+                    }
+
                     return (
                       <FormItem>
-                        <FieldLabel required>Link Linkedin</FieldLabel>
+                        <FormLabel required={getIsFieldRequired(field.name)}>
+                          Link Linkedin
+                        </FormLabel>
 
                         <FormControl>
                           <Input {...field} placeholder="https://linkedin.com/in/username" />
