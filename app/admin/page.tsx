@@ -8,10 +8,16 @@ import { JobEmpty } from "./_components/JobEmpty";
 import { JobItem } from "./_components/JobItem";
 import { useJobs } from "@/features/jobs/queries/use-jobs";
 import { Loading } from "@/components/ui/loading";
+import { Job } from "@/features/jobs/types";
+import { useMemo, useState } from "react";
 
 const AdminPage = () => {
+  const [value, setValue] = useState("");
+
   const { data, isPending } = useJobs();
-  const jobs = data ?? [];
+  const filtered: Job[] = useMemo(() => {
+    return data?.filter((e) => e.title.toLowerCase().includes(value.toLowerCase())) ?? [];
+  }, [value, data]);
 
   if (isPending) {
     return <Loading />;
@@ -21,7 +27,11 @@ const AdminPage = () => {
     <div className="flex flex-row gap-6">
       <div className="flex flex-col w-full gap-4">
         <InputGroup>
-          <InputGroupInput placeholder="Search by job details" />
+          <InputGroupInput
+            placeholder="Search by job details"
+            value={value}
+            onChange={(e) => setValue(e.target.value)}
+          />
 
           <InputGroupAddon align={"inline-end"}>
             <div className="relative w-6 h-6">
@@ -29,11 +39,11 @@ const AdminPage = () => {
             </div>
           </InputGroupAddon>
         </InputGroup>
-        {jobs.length === 0 ? (
+        {filtered.length === 0 ? (
           <JobEmpty />
         ) : (
           <div className="flex flex-col gap-4">
-            {jobs.map((e) => {
+            {filtered.map((e) => {
               return <JobItem key={e.id} data={e} />;
             })}
           </div>
