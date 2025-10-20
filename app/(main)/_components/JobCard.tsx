@@ -14,7 +14,7 @@ export const JobCard = ({ data, active, onClick }: JobCardProps) => {
     <button
       type="button"
       className={cn(
-        "flex flex-col border border-neutral-40 justify-center px-4 rounded-lg h-[140px] w-full",
+        "flex flex-col border border-neutral-40 justify-center px-4 rounded-lg min-h-[140px] w-full",
         "cursor-pointer hover:border-primary-main hover:bg-neutral-10 hover:shadow",
         active && "border-primary-main"
       )}
