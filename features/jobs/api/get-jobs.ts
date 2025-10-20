@@ -22,6 +22,7 @@ export const getJobs = async () => {
       )
     `
     )
+    .order("created", { ascending: false })
     .overrideTypes<Job[]>();
 
   if (error) throw error;

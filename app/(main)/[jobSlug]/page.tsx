@@ -24,17 +24,16 @@ import {
 } from "@/components/ui/form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ApplicantFormData, ApplicantFormInput, formSchema } from "@/features/applicants/schema";
-import { useCreateApplicant } from "@/features/applicants/queries/use-create-applicant";
+import { useApplicant, useCreateApplicant } from "@/features/applicants/queries/use-applicant";
 import { toast } from "sonner";
-import { useRegencies } from "@/features/applicants/queries/use-regencies";
+import { Loading } from "@/components/ui/loading";
 
 const JobPage = () => {
   const router = useRouter();
 
   const { jobSlug } = useParams<{ jobSlug?: string }>();
-  const { data } = useJob(jobSlug);
-  const { data: regencies } = useRegencies();
-  const { mutate, isPending } = useCreateApplicant();
+  const { data, isPending } = useApplicant(jobSlug);
+  const { mutate, isPending: isCreateApplicationLoading } = useCreateApplicant();
 
   const form = useForm<ApplicantFormInput, undefined, ApplicantFormData>({
     resolver: zodResolver(formSchema),
@@ -52,7 +51,7 @@ const JobPage = () => {
   const onSubmit = (values: ApplicantFormData) => {
     if (data) {
       mutate(
-        { data: values, job: data },
+        { data: values, job: data.job },
         {
           onSuccess: () => {
             toast.success("Your application has been submitted successfully.");
@@ -60,12 +59,20 @@ const JobPage = () => {
             router.back();
           },
           onError: () => {
-            toast.error(`Failed to apply ${data.title} Job`);
+            toast.error(`Failed to apply ${data.job.title} Job`);
           },
         }
       );
     }
   };
+
+  if (isPending) {
+    return (
+      <div className="flex flex-col w-1/2 mx-auto bg-neutral-10">
+        <Loading />
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col w-1/2 mx-auto bg-neutral-10">
@@ -76,7 +83,7 @@ const JobPage = () => {
               <ArrowLeftIcon className="h-5 w-5" />
             </Button>
 
-            <span className="font-bold text-lg text-neutral-100">Apply {data?.title}</span>
+            <span className="font-bold text-lg text-neutral-100">Apply {data?.job.title}</span>
           </div>
 
           <span className="text-sm">ℹ️ This field required to fill</span>
@@ -197,7 +204,7 @@ const JobPage = () => {
                         <FormControl>
                           <ComboboxInput
                             placeholder="Choose your domicile"
-                            options={regencies?.map((e) => ({
+                            options={data?.regencies.map((e) => ({
                               value: e,
                               label: e,
                             }))}
@@ -274,7 +281,7 @@ const JobPage = () => {
         type="button"
         className="my-6 mx-10"
         variant="primary"
-        isLoading={isPending}
+        isLoading={isCreateApplicationLoading}
         onClick={form.handleSubmit(onSubmit)}
       >
         Submit

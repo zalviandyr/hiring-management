@@ -23,6 +23,7 @@ export const getActiveJobs = async () => {
     `
     )
     .eq("status", "active")
+    .order("created", { ascending: false })
     .overrideTypes<Job[]>();
 
   if (error) throw error;
