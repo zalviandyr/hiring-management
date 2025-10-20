@@ -29,9 +29,7 @@ const HomePage = () => {
       {/* Job List */}
       <div className="flex flex-col px-5 gap-5 w-[25%] h-[90vh] overflow-scroll">
         {jobs.map((e) => (
-          <div key={e.id} className="h-full">
-            <JobCard data={e} onClick={(job) => setSelectedJob(job)} />
-          </div>
+          <JobCard key={e.id} data={e} onClick={(job) => setSelectedJob(job)} />
         ))}
       </div>
 
