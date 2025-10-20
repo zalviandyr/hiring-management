@@ -20,7 +20,10 @@ export const JobItem = ({ data }: JobItemProps) => {
       </div>
 
       <div className="flex flex-col gap-2">
-        <span className="text-neutral-100 font-bold text-lg">{data.title}</span>
+        <div className="flex flex-col">
+          <span className="text-neutral-100 font-bold text-lg">{data.title}</span>
+          <span className="text-sm">{data.department}</span>
+        </div>
 
         <div className="flex flex-row justify-between">
           <div className="flex flex-row text-neutral-80 gap-1">

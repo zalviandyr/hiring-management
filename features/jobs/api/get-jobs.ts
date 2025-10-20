@@ -7,19 +7,8 @@ export const getJobs = async () => {
     .from("jobs")
     .select(
       `
-      id,
-      slug,
-      title,
-      type,
-      description,
-      status,
-      created,
-      salary_range:job_salaries (
-        id,
-        min,
-        max,
-        currency
-      )
+      *,
+      salary_range:job_salaries (*)
     `
     )
     .order("created", { ascending: false })
