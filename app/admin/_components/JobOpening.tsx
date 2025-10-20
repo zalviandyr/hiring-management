@@ -32,6 +32,8 @@ import { formSchema, JobFormData, JobFormInput } from "@/features/jobs/schema";
 import { toast } from "sonner";
 import { useState } from "react";
 import { FormRequirement } from "@/features/jobs/types";
+import { useJobsKey } from "@/features/jobs/queries/use-jobs";
+import { useQueryClient } from "@tanstack/react-query";
 
 export const JobOpening = ({ children }: React.PropsWithChildren) => {
   const [open, setOpen] = useState(false);
@@ -168,12 +170,16 @@ const JobOpeningContent = ({
   });
 
   const { mutate, isPending } = useCreateJob();
+  const queryClient = useQueryClient();
   const onSubmit = (values: JobFormData) => {
     mutate(
       { data: values, formRequirements: properties },
       {
         onSuccess: () => {
           toast.success(`Success to create ${values.title} Job`);
+
+          // refetch job
+          queryClient.invalidateQueries({ queryKey: useJobsKey });
 
           setOpen?.(false);
         },
