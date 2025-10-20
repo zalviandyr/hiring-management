@@ -5,6 +5,7 @@ export type FieldStatus = "mandatory" | "optional" | "off";
 export type Job = {
   id: string;
   slug: string;
+  department: string;
   type: string;
   title: string;
   description: string;

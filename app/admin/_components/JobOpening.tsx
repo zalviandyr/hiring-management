@@ -228,6 +228,24 @@ const JobOpeningContent = ({
 
               <FormField
                 control={form.control}
+                name="department"
+                render={({ field }) => {
+                  return (
+                    <FormItem>
+                      <FormLabel required>Job Department</FormLabel>
+
+                      <FormControl>
+                        <Input {...field} placeholder="Ex. Rakamin" />
+                      </FormControl>
+
+                      <FormMessage />
+                    </FormItem>
+                  );
+                }}
+              />
+
+              <FormField
+                control={form.control}
                 name="type"
                 render={({ field }) => {
                   return (

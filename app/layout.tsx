@@ -24,6 +24,7 @@ export const metadata: Metadata = {
 // TODO: logic max candidate when applicant apply
 // TODO: add dropdown currency
 // TODO: responsive
+// TODO: supabase schema
 /*
 Enhancement
 1. Indicator ketika take picture
