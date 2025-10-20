@@ -34,18 +34,24 @@ import { useState } from "react";
 import { FormRequirement } from "@/features/jobs/types";
 
 export const JobOpening = ({ children }: React.PropsWithChildren) => {
+  const [open, setOpen] = useState(false);
+
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>{children}</DialogTrigger>
 
       <DialogContent className="!max-w-[700px]">
-        <JobOpeningContent />
+        <JobOpeningContent setOpen={setOpen} />
       </DialogContent>
     </Dialog>
   );
 };
 
-const JobOpeningContent = () => {
+const JobOpeningContent = ({
+  setOpen,
+}: {
+  setOpen?: React.Dispatch<React.SetStateAction<boolean>>;
+}) => {
   const [properties, setProperties] = useState<FormRequirement[]>([
     {
       key: "full-name",
@@ -168,6 +174,8 @@ const JobOpeningContent = () => {
       {
         onSuccess: () => {
           toast.success(`Success to create ${values.title} Job`);
+
+          setOpen?.(false);
         },
         onError: () => {
           toast.error(`Failed to create ${values.title} Job`);
